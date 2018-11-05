@@ -1,0 +1,30 @@
+service: asana-gitlab-bridge
+plugins:
+  - serverless-dotenv-plugin
+
+custom:
+  
+  # Vars to share from global .env
+  dotenv:
+    path: ../.env
+    include:
+      - CONTENTFUl_ACCESS_TOKEN
+      - CONTENTFUL_SPACE_ID
+      - GITLAB_ACCESS_TOKEN
+      - ASANA_ACCESS_TOKEN
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: us-east-1
+  logRetentionInDays: 30
+  
+functions:
+  
+  listAsanaProjects:
+    handler: handler.listAsanaProjects
+    description: Return list of Asana projects
+    events:
+      - http: GET asana/projects
+
+

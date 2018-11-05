@@ -1,6 +1,6 @@
 # Asana Gitlab Bridge
 
-Opinionated self-hosted tool that keeps GitLab in sync with Asana.  Uses Contentful as a CMS to setup the mapping between Asana and GitLab projects.  Uses Slack to deliver notifications that an estimate is requested.
+Opinionated, self-hosted tool that keeps GitLab in sync with Asana.  Uses Contentful as a CMS to setup the mapping between Asana and GitLab projects.  Uses Slack to deliver notifications that an estimate is requested.  Uses AWS + Serverless Framework to handle webhooks from services.
 
 ## How it works
 
@@ -12,3 +12,7 @@ Opinionated self-hosted tool that keeps GitLab in sync with Asana.  Uses Content
 6. An Asana user moves the issue to a milestone section.
 7. The bridge automatically creates a GitLab issue for the Asana task, including a link back to the Asana task.
 8. When the GitLab issue is closed, the bridge automatically closes the Asana task.
+
+## Setup
+
+1. Duplicate .env.sample as .env and populate all fields.  For Contentful, GitLab, and Asana, you can use Personal Access Tokens (see their docs).  For AWS, I followed the Serverless docs in giving the IAM account `AdministratorAccess`.
