@@ -25,6 +25,8 @@ functions:
     handler: handler.listAsanaProjects
     description: Return list of Asana projects
     events:
-      - http: GET asana/projects
-
+      - http:
+          path: asana/projects
+          method: get 
+          cors: true
 

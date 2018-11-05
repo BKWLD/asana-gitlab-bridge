@@ -18,4 +18,5 @@ module.exports = (request) ->
 
 	# Return success
 	statusCode: 200
+	headers: 'Access-Control-Allow-Origin': '*'
 	body: JSON.stringify projects

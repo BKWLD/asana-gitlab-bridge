@@ -16,3 +16,11 @@ Opinionated, self-hosted tool that keeps GitLab in sync with Asana.  Uses Conten
 ## Setup
 
 1. Duplicate .env.sample as .env and populate all fields.  For Contentful, GitLab, and Asana, you can use Personal Access Tokens (see their docs).  For AWS, I followed the Serverless docs in giving the IAM account `AdministratorAccess`.
+
+2. Run `yarn severless deploy` to deploy the AWS Lambdas.  Don't close the terminal, you'll need the `endpoints` in Step 5.
+
+3. Until https://github.com/contentful/contentful-cli/issues/41 is implemented, you'll need to login to Contentful CLI by running: `yarn contentful login`.
+
+4. Run `contentful:asana:create` and `contentful:gitlab:create` to create the Contentful extensions in your space.
+
+5. Go into the Settings > Extensions in Contentful and for the Asana and GitLab extensions, edit them and supply the "Project list URL"s using the `...asana/projects` and `...gitlab/projects` URLs that Serverless rendered to the console.  Click save after pasting in the URL.

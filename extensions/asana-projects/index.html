@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" >
+	<title>Asana Projects</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+	<link rel="stylesheet" href="https://contentful.github.io/ui-extensions-sdk/cf-extension.css">
+	<script src="https://unpkg.com/contentful-ui-extensions-sdk@3"></script>
+	<style media="screen">
+			/* This padding was unncessary */
+			select.cf-form-input {
+				padding-left: 0;
+			}
+			
+			/* Bottom styles don't look good  */
+			.cf-form-field {
+				margin-bottom: 0;
+			}
+	</style>
+</head>
+
+<body>
+	<div class="cf-form-field">
+		<select id="projects" class="cf-form-input">
+		</select>
+		<div class="cf-form-hint">
+			Get project list from Asana.
+		</div>
+	</div>
+
+	<script type="text/javascript">
+	
+		// Wait for Contentful
+		window.contentfulExtension.init(function (api) {
+			api.window.startAutoResizer()
+
+			// Query for list of projects
+			$.get(api.parameters.installation.projectListUrl)
+			.then(function (response) {
+					
+				// Make project options
+				response.forEach(function (project) {
+					var option = document.createElement('option')
+					option.setAttribute('project', project.id)
+					option.innerText = project.name
+					$('#projects').append(option)
+				})
+				
+				// Set initial value
+				$('#projects').val(api.field.getValue())
+			})
+			
+			// Update value on change
+			$('#projects').on('input', function () {
+				api.field.setValue(this.value)
+			})
+		})
+	</script>
+</body>
+
+</html>

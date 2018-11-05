@@ -1,0 +1,16 @@
+{
+  "id": "asana-projects",
+  "name": "Asana projects",
+  "srcdoc": "./index.html",
+  "fieldTypes": ["Symbol", "Text"],
+  "parameters": {
+    "installation": [
+      {
+        "id": "projectListUrl",
+        "name": "Project list URL",
+        "type": "Symbol",
+        "required": true
+      }
+    ]
+  }
+}
