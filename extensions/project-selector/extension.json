@@ -1,10 +1,10 @@
 {
-  "id": "asana-projects",
-  "name": "Asana projects",
+  "id": "project-selector",
+  "name": "Project selector",
   "srcdoc": "./index.html",
   "fieldTypes": ["Symbol", "Text"],
   "parameters": {
-    "installation": [
+    "instance": [
       {
         "id": "projectListUrl",
         "name": "Project list URL",

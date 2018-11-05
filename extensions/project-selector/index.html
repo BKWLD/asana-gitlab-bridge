@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8" >
-	<title>Asana Projects</title>
+	<title>Projects</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
 	<link rel="stylesheet" href="https://contentful.github.io/ui-extensions-sdk/cf-extension.css">
@@ -14,7 +14,7 @@
 				padding-left: 0;
 			}
 			
-			/* Bottom styles don't look good  */
+			/* Bottom margin was unncessary */
 			.cf-form-field {
 				margin-bottom: 0;
 			}
@@ -23,11 +23,7 @@
 
 <body>
 	<div class="cf-form-field">
-		<select id="projects" class="cf-form-input">
-		</select>
-		<div class="cf-form-hint">
-			Get project list from Asana.
-		</div>
+		<select id="projects" class="cf-form-input"></select>
 	</div>
 
 	<script type="text/javascript">
@@ -37,7 +33,7 @@
 			api.window.startAutoResizer()
 
 			// Query for list of projects
-			$.get(api.parameters.installation.projectListUrl)
+			$.get(api.parameters.instance.projectListUrl)
 			.then(function (response) {
 					
 				// Make project options

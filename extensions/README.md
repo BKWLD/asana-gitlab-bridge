@@ -1,1 +1,1 @@
-Contentful UI Extensions for selecting projects
+Contentful UI Extensions for selecting projects.
