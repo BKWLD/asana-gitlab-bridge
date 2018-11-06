@@ -10,8 +10,9 @@ custom:
     include:
       - CONTENTFUl_ACCESS_TOKEN
       - CONTENTFUL_SPACE_ID
-      - GITLAB_ACCESS_TOKEN
       - ASANA_ACCESS_TOKEN
+      - GITLAB_ACCESS_TOKEN
+      - GITLAB_GROUP
 
 provider:
   name: aws
@@ -30,3 +31,11 @@ functions:
           method: get 
           cors: true
 
+  listGitlabProjects:
+    handler: handler.listGitlabProjects
+    description: Return list of GitLab projects
+    events:
+      - http:
+          path: gitlab/projects
+          method: get 
+          cors: true
