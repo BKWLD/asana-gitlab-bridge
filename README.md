@@ -24,3 +24,8 @@ Opinionated, self-hosted tool that keeps GitLab in sync with Asana.  Uses Conten
 4. Run `contentful:create` to create the Contentful extension in your space.
 
 5. Go into the Settings > Extensions in Contentful and for the Asana and GitLab extensions, edit them and supply the "Project list URL"s using the `...asana/projects` and `...gitlab/projects` URLs that Serverless rendered to the console.  Click save after pasting in the URL.
+
+## Known issues
+
+- We're not currently paginating through responses so only the first 100 projects in either platform will show up in select menus in Contentful.
+- We're fetching all the projects the user whose access token is used in both platforms.

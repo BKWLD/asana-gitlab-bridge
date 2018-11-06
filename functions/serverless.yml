@@ -12,7 +12,6 @@ custom:
       - CONTENTFUL_SPACE_ID
       - ASANA_ACCESS_TOKEN
       - GITLAB_ACCESS_TOKEN
-      - GITLAB_GROUP
 
 provider:
   name: aws
