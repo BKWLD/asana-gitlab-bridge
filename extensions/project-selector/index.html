@@ -39,7 +39,7 @@
 				// Make project options
 				response.forEach(function (project) {
 					var option = document.createElement('option')
-					option.setAttribute('project', project.id)
+					option.setAttribute('value', project.id)
 					option.innerText = project.name
 					$('#projects').append(option)
 				})
