@@ -21,6 +21,7 @@ module.exports = (request) ->
 	for name, client of platforms
 		
 		# Delete old hook
+		console.debug "Deleting #{name}", entryId
 		await client.deleteWebhook entryId
 			
 		# Make new hook

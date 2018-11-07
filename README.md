@@ -28,6 +28,10 @@ Opinionated, self-hosted tool that keeps GitLab in sync with Asana.  Uses Conten
 	![](http://yo.bkwld.com/8039e7d3b7bb/Image%202018-11-07%20at%209.59.33%20AM.png)
 	![](http://yo.bkwld.com/246460d84853/Image%202018-11-07%20at%2010.04.23%20AM.png)
 
+6. Create a Contentful Webhook like this one:
+
+	![](http://yo.bkwld.com/fcd1c63f33f9/Image%202018-11-07%20at%201.07.32%20PM.png)
+
 ## Known issues
 
 - We're not currently paginating through responses so only the first 100 projects in either platform will show up in select menus in Contentful.

@@ -1,6 +1,7 @@
 # Deps
 axios = require 'axios'
 _ = require 'lodash'
+db = new (require './db')
 
 # Define the service
 module.exports = class Gitlab
@@ -21,8 +22,23 @@ module.exports = class Gitlab
 		return _.sortBy projects, 'name'
 	
 	# Create a webhook for a given project id
-	createWebhook: (projectId) ->
-
+	createWebhook: (entryId, projectId) ->
+		{ data } = await @client.post "/projects/#{projectId}/hooks",
+			url: "#{process.env.GATEWAY_URL}/gitlab/webhook"
+			issues_events: true
+			push_events: false
+			enable_ssl_verification: true
+		await db.put @webhookKey(entryId), 
+			webhookId: data.id
+			projectId: projectId
+		
 	# Delete a webhook for a given project id
-	deleteWebhook: (projectId) ->
+	deleteWebhook: (entryId) -> 
+		if payload = await db.get @webhookKey entryId
+			{ webhookId, projectId } = payload
+			await @client.delete "/projects/#{projectId}/hooks/#{webhookId}"
+			await db.delete @webhookKey entryId
+	
+	# Make the key for storing webhooks
+	webhookKey: (entryId) -> "gitlab-#{entryId}-webhook-id"
 	
