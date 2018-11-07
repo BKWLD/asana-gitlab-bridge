@@ -12,13 +12,19 @@ custom:
       - CONTENTFUL_SPACE_ID
       - ASANA_ACCESS_TOKEN
       - GITLAB_ACCESS_TOKEN
-      
-  # For use in mapping lowercase stage names to uppercased used in derived
-  # environment variables
-  environments:
-    dev: DEV
-    uat: UAT
-    prod: PROD
+  
+  # Get the stage and region
+  stage: ${opt:stage, self:provider.stage}
+  region: ${opt:region, self:provider.region}
+  
+  # Make the gateway URL
+  # http://www.goingserverless.com/blog/api-gateway-url
+  gatewayUrl:
+    Fn::Join:
+      - ""
+      - - "https://"
+        - Ref: "ApiGatewayRestApi"
+        - ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}"
 
 provider:
   name: aws
@@ -29,15 +35,13 @@ provider:
   # Derived variables
   environment:
     DB: asana-gitlab-bridge-${opt:stage, self:provider.stage}
+    GATEWAY_URL: ${env:GATEWAY_URL, self:provider.gatewayUrl}
   
   # Database rules
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Query
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
+        - dynamodb:*
       Resource: 
         - arn:aws:dynamodb:*:*:table/${self:provider.environment.DB}
         - arn:aws:dynamodb:*:*:table/${self:provider.environment.DB}/*

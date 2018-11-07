@@ -6,7 +6,7 @@ _ = require 'lodash'
 module.exports = class Gitlab
 	
 	# Build Axios client
-	constructor: -> @axios.create
+	constructor: -> @client = axios.create
 		baseURL: 'https://gitlab.com/api/v4'
 		headers: 'Private-Token': process.env.GITLAB_ACCESS_TOKEN
 	
@@ -20,8 +20,9 @@ module.exports = class Gitlab
 			name: project.name_with_namespace 
 		return _.sortBy projects, 'name'
 	
-		# Delete a webhook for a given project id
-		deleteWebhook: (projectId) ->
-		
-		# Create a webhook for a given project id
-		createWebhook: (projectId) ->
+	# Create a webhook for a given project id
+	createWebhook: (projectId) ->
+
+	# Delete a webhook for a given project id
+	deleteWebhook: (projectId) ->
+	
