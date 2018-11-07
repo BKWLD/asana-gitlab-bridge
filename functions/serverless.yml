@@ -12,12 +12,35 @@ custom:
       - CONTENTFUL_SPACE_ID
       - ASANA_ACCESS_TOKEN
       - GITLAB_ACCESS_TOKEN
+      
+  # For use in mapping lowercase stage names to uppercased used in derived
+  # environment variables
+  environments:
+    dev: DEV
+    uat: UAT
+    prod: PROD
 
 provider:
   name: aws
   runtime: nodejs8.10
   region: us-east-1
   logRetentionInDays: 30
+  
+  # Derived variables
+  environment:
+    DB: asana-gitlab-bridge-${opt:stage, self:provider.stage}
+  
+  # Database rules
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: 
+        - arn:aws:dynamodb:*:*:table/${self:provider.environment.DB}
+        - arn:aws:dynamodb:*:*:table/${self:provider.environment.DB}/*
   
 functions:
   
@@ -54,3 +77,22 @@ functions:
       - http:
           path: contentful/webhook
           method: post 
+
+resources:
+  Resources:
+    
+    # Make the key-val store DB
+    DB:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DB}
+        AttributeDefinitions:
+          - AttributeName: key
+            AttributeType: S
+        KeySchema:
+          - AttributeName: key
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    
