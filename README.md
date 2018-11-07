@@ -15,7 +15,7 @@ Opinionated, self-hosted tool that keeps GitLab in sync with Asana.  Uses Conten
 
 ## Setup
 
-1. Duplicate .env.sample as .env and populate all fields.  For Contentful, GitLab, and Asana, you can use Personal Access Tokens (see their docs).  For AWS, I followed the Serverless docs in giving the IAM account `AdministratorAccess`.
+1. Duplicate .env.example as .env and populate all fields.  For Contentful, GitLab, and Asana, you can use Personal Access Tokens (see their docs).  For AWS, I followed the Serverless docs in giving the IAM account `AdministratorAccess`.
 
 2. Run `yarn severless deploy` to deploy the AWS Lambdas.  Don't close the terminal, you'll need the `endpoints` in Step 5.
 
