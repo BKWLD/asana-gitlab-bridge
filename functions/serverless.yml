@@ -38,3 +38,11 @@ functions:
           path: gitlab/projects
           method: get 
           cors: true
+  
+  onAsanaWebhook:
+    handler: handler.onAsanaWebhook
+    description: Handle Asana webhook
+    events:
+      - http:
+          path: asana/webhook
+          method: post 

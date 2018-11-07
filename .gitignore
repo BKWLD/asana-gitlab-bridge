@@ -60,3 +60,6 @@ typings/
 # next.js build output
 .next
 .DS_Store
+
+# test JSON that I don't want in public repo
+functions/handlers/*/*.json
