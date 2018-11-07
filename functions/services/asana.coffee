@@ -1,4 +1,6 @@
+# Deps
 axios = require 'axios'
+_ = require 'lodash'
 
 # Define the service
 module.exports = class Asana
@@ -7,17 +9,11 @@ module.exports = class Asana
 	constructor: -> @axios.create
 		baseURL: 'https://app.asana.com/api/1.0'
 		headers: Authorization: "Bearer #{process.env.ASANA_ACCESS_TOKEN}"
-	# 
-	# # Util for accessing key given an entry
-	# field: (entry, key) -> entry?.fields?[key]?['en-US']
-	# 
-	# # Util for getting the id of an entry
-	# id: (entry) -> entry?.sys?.id
-	# 
-	# # Get the last entry
-	# lastSnapshot: (entryId) -> 
-	# 	{ data } = await @client "/entries/#{entryId}/snapshots", parms:
-	# 		order: 'sys.updatedAt'
-	# 		limit: 1
-	# 		skip: 1
-	# 	return data?.items?[0]?.snapshot
+	
+	# Fetch list of projects for access token
+	getProjects: ->
+		response = await @client.get '/projects'
+		projects = response.data.data.map (project) -> 
+			id: project.id
+			name: project.name 
+		return _.sortBy projects, 'name'

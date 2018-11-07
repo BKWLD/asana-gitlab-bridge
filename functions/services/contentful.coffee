@@ -20,7 +20,7 @@ module.exports = class Contentful
 	
 	# Get the last version of the entry
 	lastSnapshot: (entryId) -> 
-		{ data } = await @client "/entries/#{entryId}/snapshots", parms:
+		{ data } = await @client "/entries/#{entryId}/snapshots", params:
 			order: 'sys.updatedAt'
 			limit: 1
 			skip: 1
