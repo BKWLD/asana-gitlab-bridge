@@ -17,3 +17,9 @@ module.exports = class Asana
 			id: project.id
 			name: project.name 
 		return _.sortBy projects, 'name'
+	
+	# Delete a webhook for a given project id
+	deleteWebhook: (projectId) ->
+	
+	# Create a webhook for a given project id
+	createWebhook: (projectId) ->

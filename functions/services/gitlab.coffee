@@ -19,3 +19,9 @@ module.exports = class Gitlab
 			id: project.id
 			name: project.name_with_namespace 
 		return _.sortBy projects, 'name'
+	
+		# Delete a webhook for a given project id
+		deleteWebhook: (projectId) ->
+		
+		# Create a webhook for a given project id
+		createWebhook: (projectId) ->
