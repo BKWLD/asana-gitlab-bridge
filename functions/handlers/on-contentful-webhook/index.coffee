@@ -16,13 +16,25 @@ module.exports = (request) ->
 	entry = JSON.parse request.body
 	last = await contentful.lastSnapshot contentful.id entry
 	
-	# Update per-project webhooks for each platform
+	# Update per-project webhooks for each platform.  We always delete and create
+	# because it's not trivial to detect whether a Contentful publish is the
+	# result of creating/changing a project or restoring an archived state.  So
+	# we always delete the current one if it exists and then creata anew, event
+	# if it means recreating the same one.
 	for name, client of platforms
-		projectId = contentful.field entry, "#{name}Project"
+		
+		# Lookup IDs
 		lastProjectId = contentful.field last, "#{name}Project"
-		if projectId != lastProjectId
-			console.debug "Updating #{name}", projectId, lastProjectId
-			await client.deleteWebhook lastProjectId if lastProjectId
+		projectId = contentful.field entry, "#{name}Project"
+		
+		# Delete previous hook
+		if lastProjectId or not projectId
+			console.debug "Deleting #{name}", lastProjectId
+			await client.deleteWebhook lastProjectId
+			
+		# Make new hook
+		if projectId
+			console.debug "Creating #{name}", projectId
 			await client.createWebhook projectId
 
 	# Return success

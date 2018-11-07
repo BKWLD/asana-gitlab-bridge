@@ -25,14 +25,12 @@ module.exports = class Asana
 			resource: projectId
 			target: "#{process.env.GATEWAY_URL}/asana/webhook"
 		await db.put @webhookKeyName(projectId), data.data.id
-	
-	# Make the key for storing webhooks
-	webhookKeyName: (projectId) -> "asana-#{projectId}-webhook-id"
-	
+		
 	# Delete a webhook for a given project id
 	deleteWebhook: (projectId) -> 
 		if webhookId = await db.get @webhookKeyName(projectId)
-			console.debug 'Deleting', webhookId
 			@client.delete "/webhooks/#{webhookId}"
 			await db.delete @webhookKeyName(projectId)
 	
+	# Make the key for storing webhooks
+	webhookKeyName: (projectId) -> "asana-#{projectId}-webhook-id"
