@@ -46,3 +46,11 @@ functions:
       - http:
           path: asana/webhook
           method: post 
+  
+  onContentfulWebhook:
+    handler: handler.onContentfulWebhook
+    description: Handle Contentful webhook
+    events:
+      - http:
+          path: contentful/webhook
+          method: post 
