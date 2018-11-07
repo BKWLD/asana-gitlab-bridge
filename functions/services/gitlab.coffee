@@ -24,7 +24,7 @@ module.exports = class Gitlab
 	# Create a webhook for a given project id
 	createWebhook: (entryId, projectId) ->
 		{ data } = await @client.post "/projects/#{projectId}/hooks",
-			url: "#{process.env.GATEWAY_URL}/gitlab/webhook"
+			url: "#{process.env.GATEWAY_URL}/gitlab/webhook?entry=#{entryId}"
 			issues_events: true
 			push_events: false
 			enable_ssl_verification: true

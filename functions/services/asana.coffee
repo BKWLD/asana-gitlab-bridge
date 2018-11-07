@@ -23,7 +23,7 @@ module.exports = class Asana
 	createWebhook: (entryId, projectId) ->
 		{ data } = await @client.post '/webhooks', data:
 			resource: projectId
-			target: "#{process.env.GATEWAY_URL}/asana/webhook"
+			target: "#{process.env.GATEWAY_URL}/asana/webhook?entry=#{entryId}"
 		await db.put @webhookKey(entryId), data.data.id
 		
 	# Delete a webhook for a given project id
