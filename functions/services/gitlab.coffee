@@ -2,6 +2,7 @@
 axios = require 'axios'
 _ = require 'lodash'
 db = new (require './db')
+asana = new (require './asana')
 
 # Define the service
 module.exports = class Gitlab
@@ -42,3 +43,20 @@ module.exports = class Gitlab
 	# Make the key for storing webhooks
 	webhookKey: (entryId) -> "gitlab-#{entryId}-webhook-id"
 	
+	# Create a issue from an Asana task
+	createIssue: (projectId, task) ->
+		{ data } = await @client.post "/projects/#{projectId}/issues",
+			title: task.name
+			description: task.notes
+		await @addTimeEstimate projectId, data.iid, 
+			asana.customFieldValue task, asana.ESTIMATE_FIELD
+		return data
+		
+	# Add the time estimat to the issue automatically
+	addTimeEstimate: (projectId, issueId, hours) ->
+		@client.post "/projects/#{projectId}/issues/#{issueId}/time_estimate",
+			duration: "#{hours}h"
+	
+	# Create a milestone (if necessary) to match the Asana task and then associate
+	# the issue with it
+	syncIssueToMilestone: (task) ->

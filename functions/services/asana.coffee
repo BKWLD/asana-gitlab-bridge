@@ -10,6 +10,7 @@ module.exports = class Asana
 	STATUS_FIELD: 'Bridge status'
 	ESTIMATE_FIELD: 'Estimate'
 	PRIORITY_FIELD: 'Priority'
+	ISSUE_FIELD: 'Gitlab Link'
 	
 	# Constatnts for Statuses
 	ESTIMATE_STATUS: 'Estimating'
@@ -119,3 +120,15 @@ module.exports = class Asana
 		fieldId = @customFieldId task, @ESTIMATE_FIELD
 		@client.put "/tasks/#{task.id}", data:
 			custom_fields: "#{fieldId}": hours 
+			
+	# A task is tickeatable if it's in the scheduling status and it's been added
+	# to a section
+	issueable: (task) ->
+		@hasStatus(task, @SCHEDULE_STATUS) and 
+			not @customFieldValue(task, @ISSUE_FIELD)
+	
+	# Add a issue reference to Asana
+	addIssue: (task, issue) ->
+		
+	# Has the task had a issue created for it?
+	issued: (task) ->

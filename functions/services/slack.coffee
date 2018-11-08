@@ -56,7 +56,7 @@ module.exports = class Slack
 	# Build the fields
 	buildEstimateTaskFields: (task, stories) ->
 		[
-			# Ticket priority
+			# Issue priority
 			{
 				title: 'Priority'
 				value: do ->
