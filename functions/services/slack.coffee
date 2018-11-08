@@ -104,17 +104,23 @@ module.exports = class Slack
 	
 	# Create the success slack message after a message is submitted
 	replaceEstimateRequestWithSuccess: (channelId, messageId, task) ->
-		
-		# Muster data
-		url = asana.taskUrl task
-		hours = asana.customFieldValue task, asana.ESTIMATE_FIELD
 
 		# Update the message
-		await @client.post 'chat.update',
-			channel: channelId
-			ts: messageId
-			text: "🍻 <#{url}|#{task.name}> has been estimated at *#{hours} hours*."
-			attachments: [] # Clear the attachments
+		await @client.post 'chat.update', 
+			@buildEstimateSuccessMessage channelId, messageId, task
 
 		# Remove the old key
 		await db.delete asana.estimateMessageKey task
+	
+	# Build the estimate success message
+	buildEstimateSuccessMessage: (channelId, messageId, task, hours = null) ->
+		
+		# Muster data
+		url = asana.taskUrl task
+		hours = asana.customFieldValue task, asana.ESTIMATE_FIELD unless hours
+		
+		# Return object
+		channel: channelId
+		ts: messageId
+		text: "🍻 <#{url}|#{task.name}> was estimated at *#{hours} hours*."
+		attachments: [] # Clear the attachments

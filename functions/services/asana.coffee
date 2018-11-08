@@ -113,3 +113,9 @@ module.exports = class Asana
 		statusId = @customFieldEnumId task, @STATUS_FIELD, status
 		@client.put "/tasks/#{task.id}", data:
 			custom_fields: "#{fieldId}": statusId 
+			
+	# Update the status custom field
+	updateEstimate: (task, hours) ->
+		fieldId = @customFieldId task, @ESTIMATE_FIELD
+		@client.put "/tasks/#{task.id}", data:
+			custom_fields: "#{fieldId}": hours 
