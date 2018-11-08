@@ -23,7 +23,7 @@ module.exports = class Slack
 		# Make message body
 		{ data } = await @client.post 'chat.postMessage',
 			channel: channel
-			text: '🕑 Time estimate needed for this task:'
+			text: '⏱ Time estimate needed for this task:'
 			username: 'Asana + GitLab bridge'
 			icon_url: 'http://yo.bkwld.com/ae5f50ff27b9/asana-logo.png'
 			attachments: [
@@ -49,7 +49,9 @@ module.exports = class Slack
 			]
 		
 		# Log the ts of the message so it can be deleted when the task is estimated
-		db.put asana.estimateMessageKey(task), data.ts
+		db.put asana.estimateMessageKey(task), 
+			channelId: data.channel
+			messageId: data.ts
 		
 	# Build the fields
 	buildEstimateTaskFields: (task, stories) ->
@@ -101,17 +103,18 @@ module.exports = class Slack
 		]
 	
 	# Create the success slack message after a message is submitted
-	replaceEstimateRequestWithSuccess: (channel, messageId, task) ->
+	replaceEstimateRequestWithSuccess: (channelId, messageId, task) ->
+		
+		# Muster data
 		url = asana.taskUrl task
 		hours = asana.customFieldValue task, asana.ESTIMATE_FIELD
-		@client.post 'chat.update',
-			channel: channel
+
+		# Update the message
+		await @client.post 'chat.update',
+			channel: channelId
 			ts: messageId
-			text: "✅ The Asana task \"#{task.name}\" has been estimated at #{hours} hours."
-			attachments: [
-				actions: [
-					type: 'button'
-					text: 'View Asana task'
-					url: url
-				]
-			]
+			text: "🍻 <#{url}|#{task.name}> has been estimated at *#{hours} hours*."
+			attachments: [] # Clear the attachments
+
+		# Remove the old key
+		await db.delete asana.estimateMessageKey task

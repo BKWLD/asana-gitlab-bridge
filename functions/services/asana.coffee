@@ -64,7 +64,7 @@ module.exports = class Asana
 	# Get a custom field value
 	customFieldValue: (task, fieldName) ->
 		field = task.custom_fields.find (field) -> field.name == fieldName
-		return field?.enum_value?.name
+		return field?.enum_value?.name || field?.number_value || field?.text_value
 	
 	# Get the id of a custom field
 	customFieldId: (task, fieldName) ->
@@ -74,8 +74,8 @@ module.exports = class Asana
 	# For an enum field, find the id of the particular opion
 	customFieldEnumId: (task, fieldName, enumName) ->
 		field = task.custom_fields.find (field) -> field.name == fieldName
-		field.enum_options.find (option) -> option.name == enumName
-		return enumName?.name
+		option = field?.enum_options?.find (option) -> option.name == enumName
+		return option?.id
 		
 	# Lookup the creator user of a story (like a note on a task)
 	getStoryCreator: (story) ->
@@ -86,6 +86,20 @@ module.exports = class Asana
 	needsEstimate: (task) ->
 		@hasStatus(task, @ESTIMATE_STATUS) and 
 			not @customFieldValue(task, @ESTIMATE_FIELD)
+	
+	# Check if we need and estimate and a message hasn't already been sent
+	needsEstimateAndNotSent: (task) ->
+		@needsEstimate(task) and not await db.get @estimateMessageKey(task)
+		
+	# Check if the estimate message can be updated from slack
+	getEstimateMessageIfEstimateComplete: (task) ->
+		return if @needsEstimate task
+		return await db.get @estimateMessageKey(task)
+	
+	# If we hvae an estimate but the status is still ON estimate
+	needsScheduleStatus: (task) ->
+		@hasStatus(task, @ESTIMATE_STATUS) and 
+			@customFieldValue(task, @ESTIMATE_FIELD)
 	
 	# Build the key used to keep track of the estimate notification
 	estimateMessageKey: (task) -> "asana-#{task.id}-estimate-message" 
@@ -98,4 +112,4 @@ module.exports = class Asana
 		fieldId = @customFieldId task, @STATUS_FIELD
 		statusId = @customFieldEnumId task, @STATUS_FIELD, status
 		@client.put "/tasks/#{task.id}", data:
-			custom_fields[fieldId] = statusId 
+			custom_fields: "#{fieldId}": statusId 

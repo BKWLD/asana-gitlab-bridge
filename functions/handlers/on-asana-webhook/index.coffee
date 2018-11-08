@@ -18,26 +18,24 @@ module.exports = (request) ->
 	body = JSON.parse request.body
 	events = (body?.events || []).filter (event) -> event.type == 'task'
 	for event in events
-		
+	
 		# Lookup the task
 		continue unless task = await asana.findTask event.resource
 
 		# If in estimating phase, trigger notification
-		if asana.needsEstimate task
+		if await asana.needsEstimateAndNotSent task
 			console.debug "Sending estimate request"
 			await slack.sendEstimateRequestForTask channel, task
 		
 		# If we don't need an estimate but the slack notification hasn't been 
-		# updated, do that now.
-		if not asana.needsEstimate(task) and 
-			messageId = await db.get asana.estimateMessageKey task
-			console.debug 'Updating estimate message'
-			await slack.replaceEstimateRequestWithSuccess channel, messageId, task
-			await db.delete asana.estimateMessageKey task
+		# updated to show success, do that now.
+		if message = await asana.getEstimateMessageIfEstimateComplete task
+			{ channelId, messageId } = message
+			console.debug 'Updating estimate message', channelId, messageId
+			await slack.replaceEstimateRequestWithSuccess channelId, messageId, task
 			
 		# If we hvae an estimate but the status is still ON estimate, update it
-		if asana.customFieldValue(task, asana.ESTIMATE_STATUS) and 
-			@customFieldValue(task, asana.ESTIMATE_FIELD)
+		if asana.needsScheduleStatus task
 			console.debug 'Updating task status', asana.SCHEDULE_STATUS
 			await asana.updateStatus task, asana.SCHEDULE_STATUS
 
