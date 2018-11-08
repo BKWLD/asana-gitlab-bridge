@@ -59,4 +59,27 @@ module.exports = class Gitlab
 	
 	# Create a milestone (if necessary) to match the Asana task and then associate
 	# the issue with it
-	syncIssueToMilestone: (task) ->
+	syncIssueToMilestone: (projectId, task) ->
+		return unless name = asana.milestoneName task
+		milestone = await @findOrCreateMilestone projectId, name
+		issue = await @getIssueFromUrl projectId,
+			asana.customFieldValue task, asana.ISSUE_FIELD
+		if issue.milestone?.id != milestone.id
+			await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
+				milestone_id: milestone.id
+		
+	# Create the milestone if it's new
+	findOrCreateMilestone: (projectId, name) ->
+		{ data } = await @client.get "/projects/#{projectId}/milestones", params:
+			search: name
+		return data[0] if data.length
+		{ data } = await @client.post "/projects/#{projectId}/milestones",
+			title: name
+		return data
+	
+	# Get the issue record form it's URL
+	getIssueFromUrl: (projectId, url) ->
+		id = url.match(/(\d+)$/)[1]
+		{ data } = await @client.get "/projects/#{projectId}/issues/#{id}"
+		return data
+		

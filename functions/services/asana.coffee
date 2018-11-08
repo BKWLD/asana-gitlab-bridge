@@ -134,4 +134,12 @@ module.exports = class Asana
 			custom_fields: "#{fieldId}": issueUrl 
 		
 	# Has the task had a issue created for it?
-	issued: (task) ->
+	issued: (task) -> !!@customFieldValue task, @ISSUE_FIELD
+	
+	# Get the milestone of an issue by looping through the memberships and 
+	# getting section ones that match the naming convention.  Trim trailing colon
+	# and whitespace from the name.
+	milestoneName: (task) ->
+		membership = task.memberships.find (membership) -> 
+			membership.section?.name?.match /^(Milestone|Sprint)/i
+		return membership.section.name.replace /\s*:\s*$/, ''
