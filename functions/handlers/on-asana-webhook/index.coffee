@@ -7,9 +7,6 @@ db = new (require '../../services/db')
 
 # Handle Asana webhooks
 module.exports = (request) ->
-			
-	# Force async/await mode
-	await Promise.resolve()
 	
 	# Lookup the Contentful entry and channel
 	entry = await contentful.findEntry request.queryStringParameters.entry
