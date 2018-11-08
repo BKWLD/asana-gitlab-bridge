@@ -6,6 +6,11 @@ db = new (require './db')
 # Define the service
 module.exports = class Asana
 	
+	# Constants
+	STATUS_FIELD: 'Bridge status'
+	PRIORITY_FIELD: 'Priority'
+	ESTIMATE_STATUS: 'Estimating'
+	
 	# Build Axios client
 	constructor: -> @client = axios.create
 		baseURL: 'https://app.asana.com/api/1.0'
@@ -34,3 +39,25 @@ module.exports = class Asana
 	
 	# Make the key for storing webhooks
 	webhookKey: (entryId) -> "asana-#{entryId}-webhook-id"
+
+	# Find a task given it's is resouce id
+	findTask: (resourceId) ->
+		{ data } = await @client.get "/tasks/#{resourceId}"
+		return data?.data
+	
+	# Get the count of task stories
+	getTaskStories: (resourceId) ->
+		{ data } = await @client.get "/tasks/#{resourceId}/stories"
+		return data?.data
+	
+	# Check if the status is a particular status
+	hasStatus: (task, status) -> 
+		status == @getStatus task, status 
+	
+	# Get the status for a task
+	getStatus: (task) -> @customFieldValue task, @STATUS_FIELD
+		
+	# Get a custom field value
+	customFieldValue: (task, fieldName) ->
+		field = task.custom_fields.find (field) -> field.name == fieldName
+		return field?.enum_value?.name

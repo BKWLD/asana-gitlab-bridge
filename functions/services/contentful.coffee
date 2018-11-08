@@ -1,3 +1,4 @@
+# Deps
 axios = require 'axios'
 
 # Define the service
@@ -17,6 +18,11 @@ module.exports = class Contentful
 	
 	# Util for getting the id of an entry
 	id: (entry) -> entry?.sys?.id
+	
+	# Find an entry by it's id
+	findEntry: (entryId) -> 
+		{ data } = await @client "/entries/#{entryId}"
+		return data
 	
 	# Get the last version of the entry
 	lastSnapshot: (entryId) -> 
