@@ -12,6 +12,7 @@ custom:
       - CONTENTFUL_SPACE_ID
       - ASANA_ACCESS_TOKEN
       - GITLAB_ACCESS_TOKEN
+      - SLACK_ACCESS_TOKEN
   
   # Get the stage and region
   stage: ${opt:stage, self:provider.stage}
@@ -70,17 +71,25 @@ functions:
     handler: handler.onAsanaWebhook
     description: Handle Asana webhook
     events:
-      - http:
-          path: asana/webhook
-          method: post 
+      - http: POST asana/webhook
   
   onContentfulWebhook:
     handler: handler.onContentfulWebhook
     description: Handle Contentful webhook
     events:
-      - http:
-          path: contentful/webhook
-          method: post 
+      - http: POST contentful/webhook
+  
+  onGitlabWebhook:
+    handler: handler.onGitlabWebhook
+    description: Handle GitLab webhook
+    events:
+      - http: POST gitlab/webhook
+
+  onSlackRequest:
+    handler: handler.onSlackRequest
+    description: Handle Slack estimate request URL
+    events:
+      - http: POST slack/estimate
 
 resources:
   Resources:

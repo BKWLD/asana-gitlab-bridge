@@ -6,10 +6,14 @@ db = new (require './db')
 # Define the service
 module.exports = class Asana
 	
-	# Constants
+	# Constants for custom field names
 	STATUS_FIELD: 'Bridge status'
+	ESTIMATE_FIELD: 'Estimate'
 	PRIORITY_FIELD: 'Priority'
+	
+	# Constatnts for Statuses
 	ESTIMATE_STATUS: 'Estimating'
+	SCHEDULE_STATUS: 'Scheduling'
 	
 	# Build Axios client
 	constructor: -> @client = axios.create
@@ -61,3 +65,37 @@ module.exports = class Asana
 	customFieldValue: (task, fieldName) ->
 		field = task.custom_fields.find (field) -> field.name == fieldName
 		return field?.enum_value?.name
+	
+	# Get the id of a custom field
+	customFieldId: (task, fieldName) ->
+		field = task.custom_fields.find (field) -> field.name == fieldName
+		return field?.id
+		
+	# For an enum field, find the id of the particular opion
+	customFieldEnumId: (task, fieldName, enumName) ->
+		field = task.custom_fields.find (field) -> field.name == fieldName
+		field.enum_options.find (option) -> option.name == enumName
+		return enumName?.name
+		
+	# Lookup the creator user of a story (like a note on a task)
+	getStoryCreator: (story) ->
+		{ data } = await @client.get "/users/#{story.created_by.id}"
+		return data.data
+	
+	# Check if the task is in the estimating phase but has no estimate
+	needsEstimate: (task) ->
+		@hasStatus(task, @ESTIMATE_STATUS) and 
+			not @customFieldValue(task, @ESTIMATE_FIELD)
+	
+	# Build the key used to keep track of the estimate notification
+	estimateMessageKey: (task) -> "asana-#{task.id}-estimate-message" 
+	
+	# Make the URL to a task
+	taskUrl: (task) -> "https://app.asana.com/0/0/#{task.id}"
+	
+	# Update the status custom field
+	updateStatus: (task, status) ->
+		fieldId = @customFieldId task, @STATUS_FIELD
+		statusId = @customFieldEnumId task, @STATUS_FIELD, status
+		@client.put "/tasks/#{task.id}", data:
+			custom_fields[fieldId] = statusId 
