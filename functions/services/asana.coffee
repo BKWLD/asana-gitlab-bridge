@@ -128,7 +128,10 @@ module.exports = class Asana
 			not @customFieldValue(task, @ISSUE_FIELD)
 	
 	# Add a issue reference to Asana
-	addIssue: (task, issue) ->
+	addIssue: (task, issueUrl) ->
+		fieldId = @customFieldId task, @ISSUE_FIELD
+		@client.put "/tasks/#{task.id}", data:
+			custom_fields: "#{fieldId}": issueUrl 
 		
 	# Has the task had a issue created for it?
 	issued: (task) ->

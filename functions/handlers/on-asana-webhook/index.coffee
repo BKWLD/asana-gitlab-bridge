@@ -49,7 +49,7 @@ module.exports = (request) ->
 		if asana.issueable task
 			console.debug 'Creating issue', task.id
 			issue = await gitlab.createIssue gitlabProjectId, task
-			await asana.addIssue task, issue
+			await asana.addIssue task, issue.web_url
 			
 		# If issued, sync the section with the Gitlab milestone
 		if asana.issued task
