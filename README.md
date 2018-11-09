@@ -2,6 +2,15 @@
 
 Opinionated, self-hosted tool that keeps GitLab in sync with Asana.  Uses Contentful as a CMS to setup the mapping between Asana and GitLab projects.  Uses Slack to deliver notifications that an estimate is requested.  Uses AWS + Serverless Framework to handle webhooks from services.
 
+#### Configuration in Contentful
+![](http://yo.bkwld.com/3af1c56253a6/Image%202018-11-09%20at%209.51.36%20AM.png)
+
+#### Slack notification that estimate is requested
+![](https://d2ddoduugvun08.cloudfront.net/items/0F3Y1t3L2W0C2F2R3H43/Screen%20Recording%202018-11-09%20at%2009.49%20AM.gif?X-CloudApp-Visitor-Id=105957)
+
+#### Automatically created GitLab ticket
+![](http://yo.bkwld.com/f264a3064f05/Image%202018-11-09%20at%209.51.06%20AM.png)
+
 ## How it works
 
 1. Admin logs into Contentful and creates a new "Map" by selecting a Asana project and GitLab project from pulldown menus.
