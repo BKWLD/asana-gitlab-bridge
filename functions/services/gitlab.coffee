@@ -89,3 +89,10 @@ module.exports = class Gitlab
 		{ data } = await @client.get "/projects/#{projectId}/issues/#{id}"
 		return data
 		
+	# Get all of the asana links in the description
+	# https://regex101.com/r/QMTHro/1
+	getAsanaTaskIds: (description) ->
+		regex = /https:\/\/app.asana.com\/\d+\/\d+\/(\d+)/g
+		ids = []
+		ids.push match[1] while match = regex.exec description
+		return ids

@@ -143,3 +143,8 @@ module.exports = class Asana
 		membership = task.memberships.find (membership) -> 
 			membership.section?.name?.match /^(Milestone|Sprint)/i
 		return membership.section.name.replace /\s*:\s*$/, ''
+		
+	# Complete a task
+	completeTask: (taskId) ->
+		@client.put "/tasks/#{taskId}", data: completed: true
+			
