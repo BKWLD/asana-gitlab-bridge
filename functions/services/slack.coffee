@@ -59,14 +59,12 @@ module.exports = class Slack
 			# Issue priority
 			{
 				title: 'Priority'
-				value: do ->
-					label = asana.customFieldValue task, 'Priority'
-					emoji = switch label
-						when 'Critical' then '📕'
-						when 'High' then '📙'
-						when 'Medium' then '📒'
-						when 'Low' then '📘'
-					return "#{emoji} #{label}"
+				value: switch asana.customFieldValue task, 'Priority'					
+					when 'Critical' then '📕 Critical'
+					when 'High' then '📙 High'
+					when 'Medium' then '📒 Medium'
+					when 'Low' then '📘 Low'
+					else "📓 Unknown"
 				short: true
 			}
 			
