@@ -147,4 +147,31 @@ module.exports = class Asana
 	# Complete a task
 	completeTask: (taskId) ->
 		@client.put "/tasks/#{taskId}", data: completed: true
-			
+	
+	# Build meta info on a task
+	getMeta: (task) ->
+		
+		# Muster data
+		url = @taskUrl task
+		stories = await @getTaskStories task.id
+		author = await @getStoryCreator stories[0] if stories.length
+		
+		# Return payload
+		url: url
+		author: 
+			name: author.name
+			url: "https://app.asana.com/0/#{author.id}"
+			icon: author.photo?.image_36x36
+		priority: switch @customFieldValue task, 'Priority'					
+			when 'Critical' then '📕 Critical'
+			when 'High' then '📙 High'
+			when 'Medium' then '📒 Medium'
+			when 'Low' then '📘 Low'
+			else "📓 Unknown"
+		comments: do ->
+			comments = stories.filter (story) -> story.type == 'comment'
+			return "💬 #{comments.length}"
+		date: '📅 '+(new Date(task.created_at)).toLocaleDateString 'en-US', 
+			month:'short'
+			day:'numeric'
+			year: 'numeric'

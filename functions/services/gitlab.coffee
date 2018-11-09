@@ -45,13 +45,16 @@ module.exports = class Gitlab
 	
 	# Create a issue from an Asana task
 	createIssue: (projectId, task) ->
-		await stories = await asana.getTaskStories task.id
+		await meta = await asana.getMeta task
 		{ data } = await @client.post "/projects/#{projectId}/issues",
 			title: task.name
 			description: """
-				💬 Created from an [Asana Task](#{asana.taskUrl(task)}) by **#{stories[0].created_by.name}**
+				💬 Created from **[this Asana Task](#{asana.taskUrl(task)})** 
+				by [#{meta.author.name]}](#{meta.author.url})
+				`#{meta.priority}` 	`#{meta.comments}` `#{meta.date}`
 				
 				---
+				
 				#{task.notes}
 				"""
 		await @addTimeEstimate projectId, data.iid, 

@@ -14,13 +14,7 @@ module.exports = class Slack
 	
 	# Post a Slack message to the channel asking for an estimate on the task
 	sendEstimateRequestForTask: (channel, task) ->
-		
-		# Muster data
-		url = asana.taskUrl task
-		stories = await asana.getTaskStories task.id
-		author = await asana.getStoryCreator stories[0] if stories.length
-		
-		# Make message body
+		meta = await asana.getMeta task
 		{ data } = await @client.post 'chat.postMessage',
 			channel: channel
 			text: '⏱ Time estimate needed for this task:'
@@ -29,22 +23,34 @@ module.exports = class Slack
 			attachments: [
 				{ # The task body
 					title: task.name
-					title_link: url
+					title_link: meta.url
 					text: task.notes
 					ts: Math.round new Date(task.created_at).getTime()/1000
-					author_name: author.name
-					author_link: "https://app.asana.com/0/#{author.id}"
-					author_icon: author.photo?.image_36x36
+					author_name: meta.author.name
+					author_link: meta.author.url
+					author_icon: meta.author.icon
 				}
 				{ # Meta type data
 					text: ''
-					fields: @buildEstimateTaskFields task, stories
+					fields: [
+						{ title: 'Priority', value: meta.priority, short: true }
+						{ title: 'Comments', value: meta.comments, short: true }
+					]
 				}
 				{ # The actions links
 					color: '#f05076'
 					text: ''
 					callback_id: task.id
-					actions: @buildEstimateTaskActions url
+					actions: 
+						{ type: 'button', text: 'View Asana task', url: url }
+						{
+							name: 'estimate'
+							text: 'Enter estimate'
+							type: 'select'
+							options: do -> for i in [1..40]
+								text: "#{i} hours"
+								value: i
+						}
 				}
 			]
 		
@@ -52,53 +58,6 @@ module.exports = class Slack
 		db.put asana.estimateMessageKey(task), 
 			channelId: data.channel
 			messageId: data.ts
-		
-	# Build the fields
-	buildEstimateTaskFields: (task, stories) ->
-		[
-			# Issue priority
-			{
-				title: 'Priority'
-				value: switch asana.customFieldValue task, 'Priority'					
-					when 'Critical' then '📕 Critical'
-					when 'High' then '📙 High'
-					when 'Medium' then '📒 Medium'
-					when 'Low' then '📘 Low'
-					else "📓 Unknown"
-				short: true
-			}
-			
-			# The amount of comments
-			{
-				title: 'Comments'
-				value: do ->
-					comments = stories.filter (story) -> story.type == 'comment'
-					return "💬 #{comments.length}"
-				short: true
-			}
-		]
-	
-	# Build the actions array
-	buildEstimateTaskActions: (url, stories) ->
-		[
-
-			# Link to the task
-			{
-				type: 'button'
-				text: 'View Asana task'
-				url: url
-			}
-			
-			# The list of hours to choose from
-			{
-				name: 'estimate'
-				text: 'Enter estimate'
-				type: 'select'
-				options: do -> for i in [1..40]
-					text: "#{i} hours"
-					value: i
-			}
-		]
 	
 	# Create the success slack message after a message is submitted
 	replaceEstimateRequestWithSuccess: (channelId, messageId, task) ->
