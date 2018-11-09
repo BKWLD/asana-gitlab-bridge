@@ -74,11 +74,13 @@ module.exports = class Gitlab
 			await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
 				milestone_id: milestone.id
 		
-	# Create the milestone if it's new
+	# Create the milestone if it's new.  Limit with search but then then do an
+	# exact match for more accuracy.
 	findOrCreateMilestone: (projectId, name) ->
 		{ data } = await @client.get "/projects/#{projectId}/milestones", params:
 			search: name
-		return data[0] if data.length
+		milestones = data.filter (milestone) -> milestone.title == name
+		return milestones[0] if milestones.length
 		{ data } = await @client.post "/projects/#{projectId}/milestones",
 			title: name
 		return data
