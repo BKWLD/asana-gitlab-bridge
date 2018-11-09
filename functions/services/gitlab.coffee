@@ -50,7 +50,7 @@ module.exports = class Gitlab
 			title: task.name
 			description: """
 				💬 Created from **[this Asana Task](#{asana.taskUrl(task)})** 
-				by [#{meta.author.name]}](#{meta.author.url})
+				by [#{meta.author.name}](#{meta.author.url})
 				`#{meta.priority}` 	`#{meta.comments}` `#{meta.date}`
 				
 				---

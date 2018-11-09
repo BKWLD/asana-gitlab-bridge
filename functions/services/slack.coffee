@@ -41,8 +41,8 @@ module.exports = class Slack
 					color: '#f05076'
 					text: ''
 					callback_id: task.id
-					actions: 
-						{ type: 'button', text: 'View Asana task', url: url }
+					actions: [
+						{ type: 'button', text: 'View Asana task', url: meta.url }
 						{
 							name: 'estimate'
 							text: 'Enter estimate'
@@ -51,6 +51,7 @@ module.exports = class Slack
 								text: "#{i} hours"
 								value: i
 						}
+					]
 				}
 			]
 		
