@@ -7,10 +7,10 @@ db = new (require './db')
 module.exports = class Asana
 	
 	# Constants for custom field names
-	STATUS_FIELD: 'Bridge status'
-	ESTIMATE_FIELD: 'Estimate'
+	STATUS_FIELD: 'Dev status'
+	ESTIMATE_FIELD: 'Est'
 	PRIORITY_FIELD: 'Priority'
-	ISSUE_FIELD: 'Gitlab Link'
+	ISSUE_FIELD: 'Issue'
 	
 	# Constatnts for Statuses
 	ESTIMATE_STATUS: 'Estimating'
