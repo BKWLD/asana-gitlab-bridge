@@ -15,6 +15,7 @@ module.exports = class Asana
 	# Constatnts for Statuses
 	ESTIMATE_STATUS: 'Estimating'
 	SCHEDULE_STATUS: 'Scheduling'
+	PENDING_STATUS: 'Pending'
 	
 	# Build Axios client
 	constructor: -> @client = axios.create

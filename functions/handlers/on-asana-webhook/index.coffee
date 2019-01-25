@@ -47,6 +47,7 @@ module.exports = (request) ->
 			console.debug 'Creating issue', task.id
 			issue = await gitlab.createIssue gitlabProjectId, task
 			await asana.addIssue task, issue.web_url
+			await asana.updateStatus task, asana.PENDING_STATUS
 			
 		# If issued, sync the section with the Gitlab milestone
 		if asana.issued task
