@@ -121,11 +121,9 @@ module.exports = class Asana
 		@client.put "/tasks/#{task.id}", data:
 			custom_fields: "#{fieldId}": hours 
 			
-	# A task is tickeatable if it's in the scheduling status and it's been added
-	# to a section
-	issueable: (task) ->
-		@hasStatus(task, @SCHEDULE_STATUS) and 
-			not @customFieldValue(task, @ISSUE_FIELD)
+	# A task is ticketable if it is in a milestone-like section but doesn't have
+	# an issue yet
+	issueable: (task) -> @inMilestone(task) and not @issued(task)
 	
 	# Add a issue reference to Asana
 	addIssue: (task, issueUrl) ->
@@ -136,13 +134,17 @@ module.exports = class Asana
 	# Has the task had a issue created for it?
 	issued: (task) -> !!@customFieldValue task, @ISSUE_FIELD
 	
+	# Check if a task is in a milestone by seeing if any of it's memberships have
+	# a milestone/sprint style name
+	inMilestone: (task) -> !!@milestoneName task
+	
 	# Get the milestone of an issue by looping through the memberships and 
 	# getting section ones that match the naming convention.  Trim trailing colon
 	# and whitespace from the name.
 	milestoneName: (task) ->
 		membership = task.memberships.find (membership) -> 
 			membership.section?.name?.match /^(Milestone|Sprint)/i
-		return membership.section.name.replace /\s*:\s*$/, ''
+		return membership?.section.name.replace /\s*:\s*$/, ''
 		
 	# Complete a task
 	completeTask: (taskId) ->
