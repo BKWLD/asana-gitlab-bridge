@@ -3408,6 +3408,17 @@ serverless-dotenv-plugin@^2.0.1:
     dotenv "^4.0.0"
     dotenv-expand "^4.0.1"
 
+serverless-sentry@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/serverless-sentry/-/serverless-sentry-1.2.0.tgz#04cc36209b74f6c9c656f9e9dc5c90fa07a4ed6a"
+  integrity sha512-7qq59mSkBZCoPZxYCD3NBI4aefEO5ooQvCxCf+9vIexJQ5lhL6Xyx3h6pykzJ7BEUu/Dq6/KQ/uKm1nshNrUJA==
+  dependencies:
+    bluebird "^3.5.1"
+    lodash "^4.17.10"
+    semver "^5.5.0"
+    superagent "^3.8.3"
+    uuid "^3.3.2"
+
 serverless@^1.32.0:
   version "1.32.0"
   resolved "https://registry.yarnpkg.com/serverless/-/serverless-1.32.0.tgz#84bd7b56dfa14edea0bf95a685e9013dc9ff5ab8"

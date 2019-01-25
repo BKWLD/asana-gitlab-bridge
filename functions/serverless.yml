@@ -1,7 +1,8 @@
 service: asana-gitlab-bridge
 plugins:
   - serverless-dotenv-plugin
-
+  - serverless-sentry
+  
 custom:
   
   # Vars to share from global .env
@@ -14,6 +15,14 @@ custom:
       - GITLAB_ACCESS_TOKEN
       - SLACK_ACCESS_TOKEN
   
+  # Sentry.io configuration
+  sentry:
+    dsn: ${env:SENTRY_DSN}
+    organization: ${env:SENTRY_ORGANIZATION}
+    project: ${env:SENTRY_PROJECT}
+    authToken: ${env:SNETRY_AUTH_TOKEN}
+    release: git
+
   # Get the stage and region
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
