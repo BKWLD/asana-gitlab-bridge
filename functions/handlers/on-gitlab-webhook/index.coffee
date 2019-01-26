@@ -14,7 +14,7 @@ module.exports = (request) ->
 	# If the issue is closed, complete all of the asana links in the description
 	payload = JSON.parse request.body
 	if payload.object_attributes.action == 'close' and 
-	process.env.CLOSE_TASK_WHEN_ISSUE_CLOSED
+	process.env.CLOSE_TASK_WHEN_ISSUE_CLOSED == 'true'
 		taskIds = gitlab.getAsanaTaskIds payload.object_attributes.description
 		for taskId in taskIds
 			console.debug "Completing", taskId
