@@ -45,6 +45,8 @@ module.exports = class Gitlab
 	
 	# Create a issue from an Asana task
 	createIssue: (projectId, task) ->
+		
+		# Create the issue
 		await meta = await asana.getMeta task
 		{ data } = await @client.post "/projects/#{projectId}/issues",
 			title: task.name
@@ -57,8 +59,15 @@ module.exports = class Gitlab
 				
 				#{task.notes}
 				"""
+				
+		# Add time estimate
 		await @addTimeEstimate projectId, data.iid, 
 			asana.customFieldValue task, asana.ESTIMATE_FIELD
+		
+		# Set the initial milestone
+		await @setMilestone projectId, data, asana.milestoneName task
+		
+		# Return the issue data
 		return data
 		
 	# Add the time estimat to the issue automatically
