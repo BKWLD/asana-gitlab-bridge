@@ -82,8 +82,8 @@ module.exports = class Gitlab
 		issue = await @getIssueFromUrl projectId,
 			asana.customFieldValue task, asana.ISSUE_FIELD
 		if name = asana.milestoneName task
-		then await @setMilestone projectId, issue, name
-		else await @clearMilestone projectId, issue
+		then @setMilestone projectId, issue, name
+		else @clearMilestone projectId, issue
 	
 	# Set the milestone of an issue
 	setMilestone: (projectId, issue, name) ->
@@ -94,7 +94,7 @@ module.exports = class Gitlab
 	
 	# Clear the milestone of a task and issue
 	clearMilestone: (projectId, issue) ->
-		await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
+		@client.put "/projects/#{projectId}/issues/#{issue.iid}",
 			milestone_id: null
 	
 	# Create the milestone if it's new.  Limit with search but then then do an
