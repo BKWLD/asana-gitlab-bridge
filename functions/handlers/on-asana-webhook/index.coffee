@@ -13,16 +13,22 @@ module.exports = (request) ->
 	channel = contentful.field entry, 'slackChannel'
 	gitlabProjectId = contentful.field entry, 'gitlabProject'
 	
-	# Loop through task events
+	# Get all the unique task ids from the events list
+	# https://stackoverflow.com/a/14438954/59160
 	body = JSON.parse request.body
-	events = (body?.events || []).filter (event) -> event.type == 'task'
-	for event in events
+	taskIds = (body?.events || [])
+		.filter (event) -> event.type == 'task'
+		.map (event) -> event.resource
+		.filter (taskId, index, self) -> self.indexOf(value) === index
+		
+	# Loop through task events
+	for taskId in taskIds
 	
 		# Lookup the task.  When moving between sections tasks seem to get new ids
 		# and will 404, thus the try/catch here.
-		console.debug 'Handling task', event.resource
-		try continue unless task = await asana.findTask event.resource
-		catch e then console.error 'Task not found', event.resource; continue
+		console.debug 'Handling task', taskId
+		try continue unless task = await asana.findTask taskId
+		catch e then console.error 'Task not found', taskId; continue
 		
 		# Don't do anything with completed tasks
 		continue if task.completed
