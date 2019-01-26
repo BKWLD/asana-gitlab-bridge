@@ -53,7 +53,12 @@ module.exports = (request) ->
 		if asana.issued task
 			console.debug 'Syncing milestone', task.id
 			await gitlab.syncIssueToMilestone gitlabProjectId, task
-
+				
+			# If a task has been issued but is not in a milestone, like if it was
+			# dragged back to "Backlog", set it's status back to Scheduling.
+			unless asana.inMilestone task
+				await asana.updateStatus task, asana.SCHEDULE_STATUS
+			
 	# Return success
 	statusCode: 200
 	headers: 'X-Hook-Secret': request.headers['X-Hook-Secret']
