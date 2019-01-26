@@ -65,7 +65,7 @@ module.exports = class Gitlab
 			asana.customFieldValue task, asana.ESTIMATE_FIELD
 		
 		# Set the initial milestone
-		await @setMilestone projectId, data, asana.milestoneName task
+		await @setMilestone projectId, task, data
 		
 		# Return the issue data
 		return data
@@ -81,21 +81,28 @@ module.exports = class Gitlab
 	syncIssueToMilestone: (projectId, task) ->
 		issue = await @getIssueFromUrl projectId,
 			asana.customFieldValue task, asana.ISSUE_FIELD
-		if name = asana.milestoneName task
-		then @setMilestone projectId, issue, name
-		else @clearMilestone projectId, issue
+		@setOrClearMilestone projectId, task, issue
+	
+	# Set or clear the milestone on an issue
+	setOrClearMilestone: (projectId, task, issue) ->
+		if asana.inMilestone task
+		then @setMilestone projectId, task, issue
+		else @clearMilestone projectId, task, issue
 	
 	# Set the milestone of an issue
-	setMilestone: (projectId, issue, name) ->
+	setMilestone: (projectId, task, issue) ->
+		name = asana.milestoneName task
 		milestone = await @findOrCreateMilestone projectId, name
 		if issue.milestone?.id != milestone.id
 			await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
 				milestone_id: milestone.id
+			await asana.updateStatus task, asana.PENDING_STATUS
 	
 	# Clear the milestone of a task and issue
-	clearMilestone: (projectId, issue) ->
-		@client.put "/projects/#{projectId}/issues/#{issue.iid}",
+	clearMilestone: (projectId, task, issue) ->
+		await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
 			milestone_id: null
+		await asana.updateStatus task, asana.SCHEDULE_STATUS
 	
 	# Create the milestone if it's new.  Limit with search but then then do an
 	# exact match for more accuracy.
