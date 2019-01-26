@@ -73,8 +73,8 @@ module.exports = class Gitlab
 		issue = await @getIssueFromUrl projectId,
 			asana.customFieldValue task, asana.ISSUE_FIELD
 		if name = asana.milestoneName task
-		then await @setMilestone projectId, task, name
-		else await @clearMilestone projectId, task
+		then await @setMilestone projectId, issue, name
+		else await @clearMilestone projectId, issue
 	
 	# Set the milestone of an issue
 	setMilestone: (projectId, issue, name) ->
