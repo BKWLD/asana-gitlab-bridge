@@ -123,8 +123,12 @@ module.exports = class Asana
 			custom_fields: "#{fieldId}": hours 
 			
 	# A task is ticketable if it is in a milestone-like section but doesn't have
-	# an issue yet
-	issueable: (task) -> @inMilestone(task) and not @issued(task)
+	# an issue yet and isn't named like a milestone (Asana will return sections
+	# like tasks)
+	issueable: (task) -> 
+		@inMilestone(task) and 
+		not @issued(task) and 
+		not @namedLikeMilestone(task.name)
 	
 	# Add a issue reference to Asana
 	addIssue: (task, issueUrl) ->
@@ -143,9 +147,12 @@ module.exports = class Asana
 	# getting section ones that match the naming convention.  Trim trailing colon
 	# and whitespace from the name.
 	milestoneName: (task) ->
-		membership = task.memberships.find (membership) -> 
-			membership.section?.name?.match /^(Milestone|Sprint)/i
+		membership = task.memberships.find (membership) =>
+			@namedLikeMilestone membership.section?.name
 		return membership?.section.name.replace /\s*:\s*$/, ''
+	
+	# Test if something has a milestone-like name
+	namedLikeMilestone: (name) -> name?.match /^(Milestone|Sprint)/i
 		
 	# Complete a task
 	completeTask: (taskId) ->
