@@ -19,7 +19,7 @@ module.exports = (request) ->
 	taskIds = (body?.events || [])
 		.filter (event) -> event.type == 'task'
 		.map (event) -> event.resource
-		.filter (taskId, index, self) -> self.indexOf(value) == index
+		.filter (taskId, index, self) -> self.indexOf(taskId) == index
 		
 	# Loop through task events
 	for taskId in taskIds
