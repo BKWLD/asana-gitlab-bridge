@@ -63,6 +63,7 @@ module.exports = class Gitlab
 		
 	# Add the time estimat to the issue automatically
 	addTimeEstimate: (projectId, issueId, hours) ->
+		return unless hours
 		@client.post "/projects/#{projectId}/issues/#{issueId}/time_estimate",
 			duration: "#{hours}h"
 	
