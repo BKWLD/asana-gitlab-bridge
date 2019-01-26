@@ -42,6 +42,7 @@ provider:
   runtime: nodejs8.10
   region: us-east-1
   logRetentionInDays: 30
+  timeout: 60
   
   # Derived variables
   environment:
