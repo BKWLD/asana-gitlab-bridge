@@ -24,6 +24,9 @@ module.exports = (request) ->
 		try continue unless task = await asana.findTask event.resource
 		catch e then console.error 'Task not found', event.resource; continue
 		
+		# Don't do anything with completed tasks
+		continue if task.completed
+		
 		# If in estimating phase, trigger notification
 		if await asana.needsEstimateAndNotSent task
 			console.debug 'Sending estimate request'
