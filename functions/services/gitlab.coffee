@@ -46,14 +46,22 @@ module.exports = class Gitlab
 	# Create a issue from an Asana task
 	createIssue: (projectId, task) ->
 		
-		# Create the issue
+		# Get meta data
 		await meta = await asana.getMeta task
+		
+		# Make the list of "tags", some of which may be optional
+		tagsLine = [ meta.priority, meta.comments, meta.date ]
+		.filter (tag) -> !!tag
+		.map (tag) -> "`#{tag}`"
+		.join ' '
+		
+		# Create the issue
 		{ data } = await @client.post "/projects/#{projectId}/issues",
 			title: task.name
 			description: """
 				💬 Created from **[this Asana Task](#{asana.taskUrl(task)})** 
 				by [#{meta.author.name}](#{meta.author.url})
-				`#{meta.priority}` 	`#{meta.comments}` `#{meta.date}`
+				#{tagsLine}
 				
 				---
 				

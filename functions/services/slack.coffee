@@ -33,7 +33,7 @@ module.exports = class Slack
 				{ # Meta type data
 					text: ''
 					fields: [
-						{ title: 'Priority', value: meta.priority, short: true }
+						{ title: 'Priority', value: meta.priority, short: true } if meta.priority
 						{ title: 'Comments', value: meta.comments, short: true }
 					]
 				}

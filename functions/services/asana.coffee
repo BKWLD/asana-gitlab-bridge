@@ -178,7 +178,6 @@ module.exports = class Asana
 			when 'High' then '📙 High'
 			when 'Medium' then '📒 Medium'
 			when 'Low' then '📘 Low'
-			else "📓 Unknown"
 		comments: do ->
 			comments = stories.filter (story) -> story.type == 'comment'
 			return "💬 #{comments.length}"
