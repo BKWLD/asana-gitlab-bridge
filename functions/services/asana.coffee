@@ -10,7 +10,7 @@ module.exports = class Asana
 	STATUS_FIELD: 'Dev status'
 	ESTIMATE_FIELD: 'Est'
 	PRIORITY_FIELD: 'Priority'
-	ISSUE_FIELD: 'Issue'
+	ISSUE_FIELD: 'GitLab'
 	
 	# Constatnts for Statuses
 	ESTIMATE_STATUS: 'Estimating'
