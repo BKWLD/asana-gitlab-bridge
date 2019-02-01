@@ -128,6 +128,7 @@ module.exports = class Asana
 	issueable: (task) -> 
 		@inMilestone(task) and 
 		not @issued(task) and 
+		task.name and # Has a name
 		not @namedLikeMilestone(task.name)
 	
 	# Add a issue reference to Asana
