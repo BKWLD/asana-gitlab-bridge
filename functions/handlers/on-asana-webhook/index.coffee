@@ -60,8 +60,10 @@ module.exports = (request) ->
 			
 		# If issued, sync the section with the Gitlab milestone
 		if asana.issued task
-			console.debug 'Syncing milestone', task.id
-			await gitlab.syncIssueToMilestone gitlabProjectId, task
+			console.debug 'Updating issue', task.id
+			issue = await gitlab.getIssueFromUrl gitlabProjectId,
+				asana.customFieldValue task, asana.ISSUE_FIELD
+			await gitlab.setOrClearMilestone issue, task
 				
 	# Return success
 	statusCode: 200

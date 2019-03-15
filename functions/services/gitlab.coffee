@@ -56,7 +56,7 @@ module.exports = class Gitlab
 		.join ' '
 		
 		# Create the issue
-		{ data } = await @client.post "/projects/#{projectId}/issues",
+		{ data: issue } = await @client.post "/projects/#{projectId}/issues",
 			title: task.name
 			description: """
 				💬 Created from **[this Asana Task](#{asana.taskUrl(task)})** 
@@ -70,57 +70,50 @@ module.exports = class Gitlab
 			labels: asana.getLabels(task).join ''
 				
 		# Add time estimate
-		await @addTimeEstimate projectId, data.iid, 
+		await @addTimeEstimate issue, 
 			asana.customFieldValue task, asana.ESTIMATE_FIELD
 		
 		# Set the initial milestone
-		await @setMilestone projectId, task, data
+		await @setMilestone issue, task
 		
 		# Return the issue data
-		return data
+		return issue
 		
 	# Add the time estimat to the issue automatically
-	addTimeEstimate: (projectId, issueId, hours) ->
+	addTimeEstimate: (issue, hours) ->
 		return unless hours
-		@client.post "/projects/#{projectId}/issues/#{issueId}/time_estimate",
+		@client.post "/projects/#{issue.project_id}/issues/#{issue.iid}/time_estimate",
 			duration: "#{hours}h"
 	
-	# Create a milestone (if necessary) to match the Asana task and then associate
-	# the issue with it
-	syncIssueToMilestone: (projectId, task) ->
-		issue = await @getIssueFromUrl projectId,
-			asana.customFieldValue task, asana.ISSUE_FIELD
-		@setOrClearMilestone projectId, task, issue
-	
 	# Set or clear the milestone on an issue
-	setOrClearMilestone: (projectId, task, issue) ->
+	setOrClearMilestone: (issue, task) ->
 		if asana.inMilestone task
-		then @setMilestone projectId, task, issue
-		else @clearMilestone projectId, task, issue
+		then @setMilestone issue, task
+		else @clearMilestone issue, task
 	
 	# Set the milestone of an issue
-	setMilestone: (projectId, task, issue) ->
+	setMilestone: (issue, task) ->
 		name = asana.milestoneName task
-		milestone = await @findOrCreateMilestone projectId, name
+		milestone = await @findOrCreateMilestone issue, name
 		if issue.milestone?.id != milestone.id
-			await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
+			await @client.put "/projects/#{issue.project_id}/issues/#{issue.iid}",
 				milestone_id: milestone.id
 			await asana.updateStatus task, asana.PENDING_STATUS
 	
 	# Clear the milestone of a task and issue
-	clearMilestone: (projectId, task, issue) ->
-		await @client.put "/projects/#{projectId}/issues/#{issue.iid}",
+	clearMilestone: (issue, task) ->
+		await @client.put "/projects/#{issue.project_id}/issues/#{issue.iid}",
 			milestone_id: null
 		await asana.updateStatus task, asana.SCHEDULE_STATUS
 	
 	# Create the milestone if it's new.  Limit with search but then then do an
 	# exact match for more accuracy.
-	findOrCreateMilestone: (projectId, name) ->
-		{ data } = await @client.get "/projects/#{projectId}/milestones", params:
-			search: name
+	findOrCreateMilestone: (issue, name) ->
+		{ data } = await @client.get "/projects/#{issue.project_id}/milestones", 
+			params: search: name
 		milestones = data.filter (milestone) -> milestone.title == name
 		return milestones[0] if milestones.length
-		{ data } = await @client.post "/projects/#{projectId}/milestones",
+		{ data } = await @client.post "/projects/#{issue.project_id}/milestones",
 			title: name
 		return data
 	
