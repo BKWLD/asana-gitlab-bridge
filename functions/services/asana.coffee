@@ -6,6 +6,7 @@ db = new (require './db')
 # Constants that are used in multiple places
 PRIORITY_FIELD = 'Priority'
 STATUS_FIELD = 'Dev status'
+DEPLOYED_STATUS = 'Deployed'
 
 # Define the service
 module.exports = class Asana
@@ -20,6 +21,7 @@ module.exports = class Asana
 	ESTIMATE_STATUS: 'Estimating'
 	SCHEDULE_STATUS: 'Scheduling'
 	PENDING_STATUS: 'Pending'
+	DEPLOYED_STATUS: DEPLOYED_STATUS
 	
 	# Status lables organized by custom fields
 	labels:
@@ -33,7 +35,7 @@ module.exports = class Asana
 			'Addressed'
 			'Staged'
 			'Approved'
-			'Deployed'
+			DEPLOYED_STATUS
 		]
 		
 	# Build Axios client
@@ -65,14 +67,14 @@ module.exports = class Asana
 	# Make the key for storing webhooks
 	webhookKey: (entryId) -> "asana-#{entryId}-webhook-id"
 
-	# Find a task given it's is resouce id
-	findTask: (resourceId) ->
-		{ data } = await @client.get "/tasks/#{resourceId}"
+	# Find a task given it's id
+	getTask: (id) ->
+		{ data } = await @client.get "/tasks/#{id}"
 		return data?.data
 	
 	# Get the count of task stories
-	getTaskStories: (resourceId) ->
-		{ data } = await @client.get "/tasks/#{resourceId}/stories"
+	getTaskStories: (id) ->
+		{ data } = await @client.get "/tasks/#{id}/stories"
 		return data?.data
 	
 	# Check if the status is a particular status
@@ -134,6 +136,13 @@ module.exports = class Asana
 		statusId = @customFieldEnumId task, @STATUS_FIELD, status
 		@client.put "/tasks/#{task.gid}", data:
 			custom_fields: "#{fieldId}": statusId 
+	
+	# Update the status custom field
+	updatePriority: (task, priority) ->
+		fieldId = @customFieldId task, @PRIORITY_FIELD
+		priorityId = @customFieldEnumId task, @PRIORITY_FIELD, priority
+		@client.put "/tasks/#{task.gid}", data:
+			custom_fields: "#{fieldId}": priorityId 
 			
 	# Update the status custom field
 	updateEstimate: (task, hours) ->

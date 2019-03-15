@@ -15,6 +15,7 @@ custom:
       - GITLAB_ACCESS_TOKEN
       - SLACK_ACCESS_TOKEN
       - CLOSE_TASK_WHEN_ISSUE_CLOSED
+      - DEPLOY_TASK_WHEN_ISSUE_CLOSED
   
   # Sentry.io configuration
   sentry:

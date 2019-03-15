@@ -14,7 +14,7 @@ module.exports = (request) ->
 	taskId = payload.callback_id
 	
 	# Lookup the task
-	task = await asana.findTask taskId
+	task = await asana.getTask taskId
 	
 	# Set the estimate on the task
 	hours = payload.actions[0].selected_options[0].value

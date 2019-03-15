@@ -27,7 +27,7 @@ module.exports = (request) ->
 		# Lookup the task.  When moving between sections tasks seem to get new ids
 		# and will 404, thus the try/catch here.
 		console.debug 'Handling task', taskId
-		try continue unless task = await asana.findTask taskId
+		try continue unless task = await asana.getTask taskId
 		catch e then console.error 'Task not found', taskId; continue
 		
 		# Don't do anything with completed tasks
