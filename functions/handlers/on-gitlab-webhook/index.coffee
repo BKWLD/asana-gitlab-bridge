@@ -15,6 +15,9 @@ module.exports = (request) ->
 	payload = JSON.parse request.body
 	return unless payload.object_kind == 'issue'
 	
+	# Get array of label titles
+	labels = payload.labels.map (label) -> label.title
+	
 	# Loop through all taskIds found in the description
 	taskIds = gitlab.getAsanaTaskIds payload.object_attributes.description
 	for taskId in taskIds
@@ -30,21 +33,23 @@ module.exports = (request) ->
 				if process.env.CLOSE_TASK_WHEN_ISSUE_CLOSED == 'true'
 					await asana.completeTask taskId
 				
-				# Mark "deployed"
+				# Add the "Deployed" label so that the subsequent "Sync labels" step
+				# will write it to GitLaba and to Asana
 				if process.env.DEPLOY_TASK_WHEN_ISSUE_CLOSED == 'true'
-					await asana.updateStatus task, asana.DEPLOYED_STATUS
-					# Also update Gitlab to keep in sync 
-
+					labels.push asana.DEPLOYED_STATUS
+					
 		# Sync labels
-		if (labels = payload.labels) and labels.length
+		if labels.length
 			console.debug "Syncing labels", taskId
-			normalizedLabels = asana.normalizeLabels labels.map (label) -> label.title
+			normalizedLabels = asana.normalizeLabels labels
 			
 			# Update labels at Asana
 			for fieldName, value of normalizedLabels
 				await asana.updateEnumCustomField task, fieldName, value
 		
-			# Only keep the foremost label at GitLab
+			# Only keep the foremost labels at GitLab
+			await gitlab.writeLabels payload.object_attributes, 
+				Object.values normalizedLabels
 
 	# Return success
 	statusCode: 200
