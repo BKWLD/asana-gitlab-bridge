@@ -58,12 +58,13 @@ module.exports = (request) ->
 			await asana.addIssue task, issue.web_url
 			await asana.updateStatus task, asana.PENDING_STATUS
 			
-		# If issued, sync the section with the Gitlab milestone
+		# If issued, sync the section with the Gitlab milestone and sync the labels
 		if asana.issued task
 			console.debug 'Updating issue', task.id
 			issue = await gitlab.getIssueFromUrl gitlabProjectId,
 				asana.customFieldValue task, asana.ISSUE_FIELD
 			await gitlab.setOrClearMilestone issue, task
+			await gitlab.writeLabels issue, asana.getLabels task
 				
 	# Return success
 	statusCode: 200

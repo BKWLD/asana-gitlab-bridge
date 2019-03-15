@@ -116,6 +116,11 @@ module.exports = class Gitlab
 		{ data } = await @client.post "/projects/#{issue.project_id}/milestones",
 			title: name
 		return data
+		
+	# Write the array of labels to the referenced project
+	writeLabels: (issue, labels) ->
+		await @client.put "/projects/#{issue.project_id}/issues/#{issue.iid}",
+			labels: labels.join ','
 	
 	# Get the issue record form it's URL
 	getIssueFromUrl: (projectId, url) ->
