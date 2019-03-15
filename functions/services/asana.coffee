@@ -2,15 +2,18 @@
 axios = require 'axios'
 _ = require 'lodash'
 db = new (require './db')
-labels = require './labels'
+
+# Constants that are used in multiple places
+PRIORITY_FIELD = 'Priority'
+STATUS_FIELD = 'Dev status'
 
 # Define the service
 module.exports = class Asana
 	
 	# Constants for custom field names
-	STATUS_FIELD: 'Dev status'
+	PRIORITY_FIELD: PRIORITY_FIELD
+	STATUS_FIELD: STATUS_FIELD
 	ESTIMATE_FIELD: 'Est'
-	PRIORITY_FIELD: 'Priority'
 	ISSUE_FIELD: 'GitLab'
 	
 	# Constatnts for Statuses
@@ -18,6 +21,21 @@ module.exports = class Asana
 	SCHEDULE_STATUS: 'Scheduling'
 	PENDING_STATUS: 'Pending'
 	
+	# Status lables organized by custom fields
+	labels:
+		"#{PRIORITY_FIELD}": [
+			'Low'
+			'Medium'
+			'High'
+			'Critical'
+		]
+		"#{STATUS_FIELD}": [ # Only those that get synced
+			'Addressed'
+			'Staged'
+			'Approved'
+			'Deployed'
+		]
+		
 	# Build Axios client
 	constructor: -> @client = axios.create
 		baseURL: 'https://app.asana.com/api/1.0'
@@ -189,21 +207,14 @@ module.exports = class Asana
 	
 	# Make an array of the active value of "label" custom fields
 	getLabels: (task) ->
-		[@PRIORITY_FIELD, @STATUS_FIELD].map (fieldName) =>
+		Object.keys(@labels).map (fieldName) =>
 
 			# Get the value of the field and return it if it's one of the values that
 			# get synced with GitLab
 			if value = @customFieldValue task, fieldName	
-				console.log @getLabelOptionsForField fieldName			
-				if value in @getLabelOptionsForField fieldName
+				if value in @labels[fieldName]
 					return value
 			
 		# Remove labels that were empty
 		.filter (label) -> !!label
 	
-	# Map the Asana custom field names to the keys of the labels arrays
-	getLabelOptionsForField: (fieldName) -> switch fieldName
-		when @PRIORITY_FIELD then labels.priorities
-		when @STATUS_FIELD then labels.statuses
-		else throw "Field name (#{fieldName}) not in labels"
-		
