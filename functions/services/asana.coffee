@@ -26,7 +26,7 @@ module.exports = class Asana
 	getProjects: ->
 		{ data } = await @client.get '/projects'
 		projects = data.data.map (project) -> 
-			id: project.id
+			id: project.gid
 			name: project.name 
 		return _.sortBy projects, 'name'
 	
@@ -35,7 +35,7 @@ module.exports = class Asana
 		{ data } = await @client.post '/webhooks', data:
 			resource: projectId
 			target: "#{process.env.GATEWAY_URL}/asana/webhook?entry=#{entryId}"
-		await db.put @webhookKey(entryId), data.data.id
+		await db.put @webhookKey(entryId), data.data.gid
 		
 	# Delete a webhook for a given project id
 	deleteWebhook: (entryId) -> 
@@ -71,17 +71,17 @@ module.exports = class Asana
 	# Get the id of a custom field
 	customFieldId: (task, fieldName) ->
 		field = task.custom_fields.find (field) -> field.name == fieldName
-		return field?.id
+		return field?.gid
 		
 	# For an enum field, find the id of the particular opion
 	customFieldEnumId: (task, fieldName, enumName) ->
 		field = task.custom_fields.find (field) -> field.name == fieldName
 		option = field?.enum_options?.find (option) -> option.name == enumName
-		return option?.id
+		return option?.gid
 		
 	# Lookup the creator user of a story (like a note on a task)
 	getStoryCreator: (story) ->
-		{ data } = await @client.get "/users/#{story.created_by.id}"
+		{ data } = await @client.get "/users/#{story.created_by.gid}"
 		return data.data
 	
 	# Check if the task is in the estimating phase but has no estimate
@@ -104,22 +104,22 @@ module.exports = class Asana
 			@customFieldValue(task, @ESTIMATE_FIELD)
 	
 	# Build the key used to keep track of the estimate notification
-	estimateMessageKey: (task) -> "asana-#{task.id}-estimate-message" 
+	estimateMessageKey: (task) -> "asana-#{task.gid}-estimate-message" 
 	
 	# Make the URL to a task
-	taskUrl: (task) -> "https://app.asana.com/0/0/#{task.id}"
+	taskUrl: (task) -> "https://app.asana.com/0/0/#{task.gid}"
 	
 	# Update the status custom field
 	updateStatus: (task, status) ->
 		fieldId = @customFieldId task, @STATUS_FIELD
 		statusId = @customFieldEnumId task, @STATUS_FIELD, status
-		@client.put "/tasks/#{task.id}", data:
+		@client.put "/tasks/#{task.gid}", data:
 			custom_fields: "#{fieldId}": statusId 
 			
 	# Update the status custom field
 	updateEstimate: (task, hours) ->
 		fieldId = @customFieldId task, @ESTIMATE_FIELD
-		@client.put "/tasks/#{task.id}", data:
+		@client.put "/tasks/#{task.gid}", data:
 			custom_fields: "#{fieldId}": hours 
 			
 	# A task is ticketable if it is in a milestone-like section but doesn't have
@@ -134,7 +134,7 @@ module.exports = class Asana
 	# Add a issue reference to Asana
 	addIssue: (task, issueUrl) ->
 		fieldId = @customFieldId task, @ISSUE_FIELD
-		@client.put "/tasks/#{task.id}", data:
+		@client.put "/tasks/#{task.gid}", data:
 			custom_fields: "#{fieldId}": issueUrl 
 		
 	# Has the task had a issue created for it?
@@ -164,14 +164,14 @@ module.exports = class Asana
 		
 		# Muster data
 		url = @taskUrl task
-		stories = await @getTaskStories task.id
+		stories = await @getTaskStories task.gid
 		author = await @getStoryCreator stories[0] if stories.length
 		
 		# Return payload
 		url: url
 		author: 
 			name: author.name
-			url: "https://app.asana.com/0/#{author.id}"
+			url: "https://app.asana.com/0/#{author.gid}"
 			icon: author.photo?.image_36x36
 		priority: switch @customFieldValue task, 'Priority'					
 			when 'Critical' then '📕 Critical'
