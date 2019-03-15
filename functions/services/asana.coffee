@@ -2,6 +2,7 @@
 axios = require 'axios'
 _ = require 'lodash'
 db = new (require './db')
+labels = require './labels'
 
 # Define the service
 module.exports = class Asana
@@ -185,3 +186,24 @@ module.exports = class Asana
 			month:'short'
 			day:'numeric'
 			year: 'numeric'
+	
+	# Make an array of the active value of "label" custom fields
+	getLabels: (task) ->
+		[@PRIORITY_FIELD, @STATUS_FIELD].map (fieldName) =>
+
+			# Get the value of the field and return it if it's one of the values that
+			# get synced with GitLab
+			if value = @customFieldValue task, fieldName	
+				console.log @getLabelOptionsForField fieldName			
+				if value in @getLabelOptionsForField fieldName
+					return value
+			
+		# Remove labels that were empty
+		.filter (label) -> !!label
+	
+	# Map the Asana custom field names to the keys of the labels arrays
+	getLabelOptionsForField: (fieldName) -> switch fieldName
+		when @PRIORITY_FIELD then labels.priorities
+		when @STATUS_FIELD then labels.statuses
+		else throw "Field name (#{fieldName}) not in labels"
+		

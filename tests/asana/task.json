@@ -1,0 +1,212 @@
+{
+	"id": 1103777802995760,
+	"gid": "1103777802995760",
+	"assignee": null,
+	"assignee_status": "upcoming",
+	"completed": false,
+	"completed_at": null,
+	"created_at": "2019-01-26T02:00:33.771Z",
+	"custom_fields": [
+		{
+			"id": 833427297391710,
+			"gid": "833427297391710",
+			"enabled": true,
+			"enum_options": [
+				{
+					"id": 924727955110176,
+					"gid": "924727955110176",
+					"color": "pink",
+					"enabled": true,
+					"name": "Estimating",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 924727955110177,
+					"gid": "924727955110177",
+					"color": "magenta",
+					"enabled": true,
+					"name": "Scheduling",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 924727955110178,
+					"gid": "924727955110178",
+					"color": "purple",
+					"enabled": true,
+					"name": "Pending",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 833427297391713,
+					"gid": "833427297391713",
+					"color": "indigo",
+					"enabled": true,
+					"name": "Addressed",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 924727955110179,
+					"gid": "924727955110179",
+					"color": "blue",
+					"enabled": true,
+					"name": "Staged",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 924727955110180,
+					"gid": "924727955110180",
+					"color": "aqua",
+					"enabled": true,
+					"name": "Approved",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 924727955110181,
+					"gid": "924727955110181",
+					"color": "blue-green",
+					"enabled": true,
+					"name": "Deployed",
+					"resource_type": "enum_option"
+				}
+			],
+			"enum_value": {
+				"id": 924727955110178,
+				"gid": "924727955110178",
+				"color": "purple",
+				"enabled": true,
+				"name": "Pending",
+				"resource_type": "enum_option"
+			},
+			"name": "Dev status",
+			"resource_subtype": "enum",
+			"resource_type": "custom_field",
+			"type": "enum"
+		},
+		{
+			"id": 827571499453008,
+			"gid": "827571499453008",
+			"enabled": true,
+			"enum_options": [
+				{
+					"id": 827571499453009,
+					"gid": "827571499453009",
+					"color": "red",
+					"enabled": true,
+					"name": "Critical",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 827571499453010,
+					"gid": "827571499453010",
+					"color": "orange",
+					"enabled": true,
+					"name": "High",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 827571499453011,
+					"gid": "827571499453011",
+					"color": "yellow",
+					"enabled": true,
+					"name": "Medium",
+					"resource_type": "enum_option"
+				},
+				{
+					"id": 827571499453012,
+					"gid": "827571499453012",
+					"color": "cool-gray",
+					"enabled": true,
+					"name": "Low",
+					"resource_type": "enum_option"
+				}
+			],
+			"enum_value": {
+				"id": 827571499453011,
+				"gid": "827571499453011",
+				"color": "yellow",
+				"enabled": true,
+				"name": "Medium",
+				"resource_type": "enum_option"
+			},
+			"name": "Priority",
+			"resource_subtype": "enum",
+			"resource_type": "custom_field",
+			"type": "enum"
+		},
+		{
+			"id": 695192697643482,
+			"gid": "695192697643482",
+			"enabled": true,
+			"name": "Est",
+			"number_value": null,
+			"precision": 1,
+			"resource_subtype": "number",
+			"resource_type": "custom_field",
+			"type": "number"
+		},
+		{
+			"id": 827571499453017,
+			"gid": "827571499453017",
+			"enabled": true,
+			"name": "GitLab",
+			"resource_subtype": "text",
+			"resource_type": "custom_field",
+			"text_value": "https://gitlab.com/bukwild/open-source/bridge-test/issues/29",
+			"type": "text"
+		}
+	],
+	"due_at": null,
+	"due_on": null,
+	"followers": [
+		{
+			"id": 722033095861307,
+			"gid": "722033095861307",
+			"name": "Robert Reinhard",
+			"resource_type": "user"
+		}
+	],
+	"hearted": false,
+	"hearts": [],
+	"liked": false,
+	"likes": [],
+	"memberships": [
+		{
+			"project": {
+				"id": 902098787034179,
+				"gid": "902098787034179",
+				"name": "Bridge testing",
+				"resource_type": "project"
+			},
+			"section": {
+				"id": 1103777802995758,
+				"gid": "1103777802995758",
+				"name": "Sprint 2/1:",
+				"resource_type": "section"
+			}
+		}
+	],
+	"modified_at": "2019-03-15T03:07:57.124Z",
+	"name": "Round 2",
+	"notes": "",
+	"num_hearts": 0,
+	"num_likes": 0,
+	"parent": null,
+	"projects": [
+		{
+			"id": 902098787034179,
+			"gid": "902098787034179",
+			"name": "Bridge testing",
+			"resource_type": "project"
+		}
+	],
+	"resource_type": "task",
+	"start_on": null,
+	"tags": [],
+	"resource_subtype": "default_task",
+	"workspace": {
+		"id": 1002443967848,
+		"gid": "1002443967848",
+		"name": "Bukwild",
+		"resource_type": "workspace"
+	}
+}

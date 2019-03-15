@@ -50,7 +50,7 @@ module.exports = class Gitlab
 		await meta = await asana.getMeta task
 		
 		# Make the list of "tags", some of which may be optional
-		tagsLine = [ meta.priority, meta.comments, meta.date ]
+		tagsLine = [ meta.comments, meta.date ]
 		.filter (tag) -> !!tag
 		.map (tag) -> "`#{tag}`"
 		.join ' '
@@ -67,6 +67,7 @@ module.exports = class Gitlab
 				
 				#{task.notes}
 				"""
+			labels: asana.getLabels(task).join ''
 				
 		# Add time estimate
 		await @addTimeEstimate projectId, data.iid, 
