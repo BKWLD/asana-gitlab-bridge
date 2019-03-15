@@ -23,19 +23,19 @@ module.exports = class Asana
 	PENDING_STATUS: 'Pending'
 	DEPLOYED_STATUS: DEPLOYED_STATUS
 	
-	# Status lables organized by custom fields
+	# Status lables organized by custom fields and ordered intentionally
 	labels:
 		"#{PRIORITY_FIELD}": [
-			'Low'
-			'Medium'
-			'High'
 			'Critical'
+			'High'
+			'Medium'
+			'Low'
 		]
 		"#{STATUS_FIELD}": [ # Only those that get synced
-			'Addressed'
-			'Staged'
-			'Approved'
 			DEPLOYED_STATUS
+			'Approved'
+			'Staged'
+			'Addressed'
 		]
 		
 	# Build Axios client
@@ -132,17 +132,18 @@ module.exports = class Asana
 	
 	# Update the status custom field
 	updateStatus: (task, status) ->
-		fieldId = @customFieldId task, @STATUS_FIELD
-		statusId = @customFieldEnumId task, @STATUS_FIELD, status
-		@client.put "/tasks/#{task.gid}", data:
-			custom_fields: "#{fieldId}": statusId 
+		@updateEnumCustomField task, @STATUS_FIELD, status
 	
 	# Update the status custom field
 	updatePriority: (task, priority) ->
-		fieldId = @customFieldId task, @PRIORITY_FIELD
-		priorityId = @customFieldEnumId task, @PRIORITY_FIELD, priority
+		@updateEnumCustomField task, @PRIORITY_FIELD, priority
+			
+	# Update an enum custom value
+	updateEnumCustomField: (task, fieldName, value) ->
+		fieldId = @customFieldId task, fieldName
+		valueId = @customFieldEnumId task, fieldName, value
 		@client.put "/tasks/#{task.gid}", data:
-			custom_fields: "#{fieldId}": priorityId 
+			custom_fields: "#{fieldId}": valueId
 			
 	# Update the status custom field
 	updateEstimate: (task, hours) ->
@@ -227,3 +228,31 @@ module.exports = class Asana
 		# Remove labels that were empty
 		.filter (label) -> !!label
 	
+	# Take an array of labels from GitLab and return an object with keys for each
+	# fieldName and only one 
+	normalizeLabels: (labels) ->
+		
+		# Open a chain
+		_(labels)
+		
+		# Group the incoming labels by Asana custom field names
+		.groupBy (label) =>
+			for fieldName, options of @labels
+				return fieldName if label in options
+			return '' # Default
+		
+		# Remove null keys; these are labels that don't get synced to Asana
+		.pickBy (labels, fieldName) -> !!fieldName
+		
+		# Reduce the labels to the highest priority or latest lifecycle label
+		# in the first index
+		.mapValues (labels, fieldName) =>
+			_(labels).orderBy (label) => @labels[fieldName].indexOf label
+			.first()
+			
+		# Set emtpy strings for any fieldNames that weren't present in the list of
+		# labels so the value will clear if the label was removed in GitLab
+		.defaults _.mapValues @labels, -> ''
+		
+		# Return final object
+		.value()
