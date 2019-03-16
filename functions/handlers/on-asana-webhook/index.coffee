@@ -33,8 +33,8 @@ module.exports = (request) ->
 		# Don't do anything with completed tasks
 		continue if task.completed
 		
-		# Don't do anything if marked not to sync
-		continue if 'No' == asana.customFieldValue asana.SHOULD_SYNC
+		# Don't do anything if there is no dev status
+		continue unless asana.customFieldValue asana.STATUS_FIELD
 		
 		# If in estimating phase, trigger notification
 		if await asana.needsEstimateAndNotSent task
