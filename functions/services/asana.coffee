@@ -16,8 +16,9 @@ module.exports = class Asana
 	STATUS_FIELD: STATUS_FIELD
 	ESTIMATE_FIELD: 'Est'
 	ISSUE_FIELD: 'GitLab'
+	SHOULD_SYNC: 'Sync with GitLab'
 	
-	# Constatnts for Statuses
+	# Constants for Statuses
 	ESTIMATE_STATUS: 'Estimating'
 	SCHEDULE_STATUS: 'Scheduling'
 	PENDING_STATUS: 'Pending'

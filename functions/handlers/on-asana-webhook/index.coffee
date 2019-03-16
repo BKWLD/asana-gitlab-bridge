@@ -33,6 +33,9 @@ module.exports = (request) ->
 		# Don't do anything with completed tasks
 		continue if task.completed
 		
+		# Don't do anything if marked not to sync
+		continue if 'No' == asana.customFieldValue asana.SHOULD_SYNC
+		
 		# If in estimating phase, trigger notification
 		if await asana.needsEstimateAndNotSent task
 			console.debug 'Sending estimate request'
