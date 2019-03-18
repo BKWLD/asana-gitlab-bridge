@@ -48,8 +48,9 @@ module.exports = (request) ->
 				await asana.updateEnumCustomField task, fieldName, value
 		
 			# Only keep the foremost labels at GitLab
-			await gitlab.writeLabels payload.object_attributes, 
-				Object.values normalizedLabels
+			mergedLabels = Object.values normalizedLabels
+			.concat gitlab.nonSyncingLabels labels
+			await gitlab.writeLabels payload.object_attributes, mergedLabels
 
 	# Return success
 	statusCode: 200

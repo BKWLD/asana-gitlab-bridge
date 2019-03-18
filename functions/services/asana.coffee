@@ -228,6 +228,11 @@ module.exports = class Asana
 		# Remove labels that were empty
 		.filter (label) -> !!label
 	
+	# Get a list of all the labels that are synced
+	syncedLabels: -> 
+		Object.values(@labels).reduce (all, labels) -> all.concat labels
+		, []
+	
 	# Take an array of labels from GitLab and return an object with keys for each
 	# fieldName and only one 
 	normalizeLabels: (labels) ->

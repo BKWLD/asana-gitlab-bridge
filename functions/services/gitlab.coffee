@@ -117,6 +117,19 @@ module.exports = class Gitlab
 			title: name
 		return data
 		
+	# Merge and then write labels that came from Asana
+	mergeAndWriteLabels: (issue, labels) ->
+		@writeLabels issue, @mergeLabels issue, labels
+	
+	# Combine the normalized labels with any existing, non-syncing labels
+	mergeLabels: (issue, labels) -> 
+		labels = Object.values asana.normalizeLabels labels
+		.concat @nonSyncingLabels issue.labels
+	
+	# Keep only the labels that don't sync
+	nonSyncingLabels: (labels) ->
+		labels.filter (label) -> label not in asana.syncedLabels()
+	
 	# Write the array of labels to the referenced project
 	writeLabels: (issue, labels) ->
 		await @client.put "/projects/#{issue.project_id}/issues/#{issue.iid}",

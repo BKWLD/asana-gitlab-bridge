@@ -67,7 +67,7 @@ module.exports = (request) ->
 			issue = await gitlab.getIssueFromUrl gitlabProjectId,
 				asana.customFieldValue task, asana.ISSUE_FIELD
 			await gitlab.setOrClearMilestone issue, task
-			await gitlab.writeLabels issue, asana.getLabels task
+			await gitlab.mergeAndWriteLabels issue, asana.getLabels task
 				
 	# Return success
 	statusCode: 200
