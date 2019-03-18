@@ -38,10 +38,12 @@ module.exports = (request) ->
 				if process.env.DEPLOY_TASK_WHEN_ISSUE_CLOSED == 'true'
 					labels.push asana.DEPLOYED_STATUS
 					
-		# Update labels at Asana
+		# Update labels at Asana, defaulting to 'Pending'.  There are statuses we
+		# don't show at GitLab, so this lets those be empty at GL.
 		console.debug "Syncing Asana labels", taskId
 		normalizedLabels = asana.normalizeLabels labels
 		for fieldName, value of normalizedLabels
+			value = PENDING_STATUS if fieldName == asana.STATUS_FIELD and !value
 			await asana.updateEnumCustomField task, fieldName, value
 	
 		# Only keep the foremost labels at GitLab

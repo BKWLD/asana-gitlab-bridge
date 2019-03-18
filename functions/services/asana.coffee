@@ -36,9 +36,6 @@ module.exports = class Asana
 			'Approved'
 			'Staged'
 			'Addressed'
-			'Pending'
-			'Scheduling'
-			'Estimating'
 		]
 		
 	# Build Axios client
