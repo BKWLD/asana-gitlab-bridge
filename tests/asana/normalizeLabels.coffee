@@ -16,3 +16,6 @@ console.info 'Check that missing fields would get cleared'
 console.debug asana.normalizeLabels [  
 		"Medium",
 	]
+
+console.info 'Check no labels works'
+console.debug asana.normalizeLabels []

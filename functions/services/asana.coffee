@@ -257,7 +257,7 @@ module.exports = class Asana
 			
 		# Set emtpy strings for any fieldNames that weren't present in the list of
 		# labels so the value will clear if the label was removed in GitLab
-		.defaults _.mapValues @labels, -> ''
+		.defaults _.mapValues @labels, -> null
 		
 		# Return final object
 		.value()
