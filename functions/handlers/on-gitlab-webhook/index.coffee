@@ -43,7 +43,7 @@ module.exports = (request) ->
 		console.debug "Syncing Asana labels", taskId
 		normalizedLabels = asana.normalizeLabels labels
 		for fieldName, value of normalizedLabels
-			value = PENDING_STATUS if fieldName == asana.STATUS_FIELD and !value
+			value = asana.PENDING_STATUS if fieldName == asana.STATUS_FIELD and !value
 			await asana.updateEnumCustomField task, fieldName, value
 	
 		# Only keep the foremost labels at GitLab
