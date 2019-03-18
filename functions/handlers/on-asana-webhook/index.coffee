@@ -34,7 +34,7 @@ module.exports = (request) ->
 		continue if task.completed
 		
 		# Don't do anything if there is no dev status
-		continue unless asana.customFieldValue asana.STATUS_FIELD
+		continue unless asana.customFieldValue task, asana.STATUS_FIELD
 		
 		# If in estimating phase, trigger notification
 		if await asana.needsEstimateAndNotSent task
