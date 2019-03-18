@@ -20,10 +20,13 @@ module.exports = (request) ->
 	# because it's cleaner and this won't be called much.
 	for name, client of platforms
 		
-		# Delete old hook
-		console.debug "Deleting #{name}", entryId
-		await client.deleteWebhook entryId
-			
+		# Delete old hook, but don't fatally die if it errors.  This could happen
+		# if Asana deleted a webhook on it's own because our endpoint was erroring.
+		try
+			console.debug "Deleting #{name}", entryId
+			await client.deleteWebhook entryId
+		catch e then console.error e
+		
 		# Make new hook
 		if projectId = contentful.field entry, "#{name}Project"
 			console.debug "Creating #{name}", projectId
