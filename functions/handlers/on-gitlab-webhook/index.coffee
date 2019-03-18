@@ -38,19 +38,17 @@ module.exports = (request) ->
 				if process.env.DEPLOY_TASK_WHEN_ISSUE_CLOSED == 'true'
 					labels.push asana.DEPLOYED_STATUS
 					
-		# Sync labels
-		if labels.length
-			console.debug "Syncing labels", taskId
-			normalizedLabels = asana.normalizeLabels labels
-			
-			# Update labels at Asana
-			for fieldName, value of normalizedLabels
-				await asana.updateEnumCustomField task, fieldName, value
-		
-			# Only keep the foremost labels at GitLab
-			mergedLabels = Object.values normalizedLabels
-			.concat gitlab.nonSyncingLabels labels
-			await gitlab.writeLabels payload.object_attributes, mergedLabels
+		# Update labels at Asana
+		console.debug "Syncing Asana labels", taskId
+		normalizedLabels = asana.normalizeLabels labels
+		for fieldName, value of normalizedLabels
+			await asana.updateEnumCustomField task, fieldName, value
+	
+		# Only keep the foremost labels at GitLab
+		console.debug "Syncing GitLab labels", taskId
+		mergedLabels = Object.values normalizedLabels
+		.concat gitlab.nonSyncingLabels labels
+		await gitlab.writeLabels payload.object_attributes, mergedLabels
 
 	# Return success
 	statusCode: 200
