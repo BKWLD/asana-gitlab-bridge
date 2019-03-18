@@ -98,7 +98,7 @@ module.exports = class Asana
 	customFieldEnumId: (task, fieldName, enumName) ->
 		field = task.custom_fields.find (field) -> field.name == fieldName
 		option = field?.enum_options?.find (option) -> option.name == enumName
-		return option?.gid
+		return option?.gid || null
 		
 	# Lookup the creator user of a story (like a note on a task)
 	getStoryCreator: (story) ->
