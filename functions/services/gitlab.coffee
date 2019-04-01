@@ -134,7 +134,7 @@ module.exports = class Gitlab
 	# Write the array of labels to the referenced project
 	writeLabels: (issue, labels) ->
 		await @client.put "/projects/#{issue.project_id}/issues/#{issue.iid}",
-			labels: labels.join ','
+			labels: labels.filter((val) -> !!val).join ','
 	
 	# Get the issue record form it's URL
 	getIssueFromUrl: (projectId, url) ->
