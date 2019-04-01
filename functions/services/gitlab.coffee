@@ -17,6 +17,7 @@ module.exports = class Gitlab
 		{ data } = await @client.get '/projects', params:
 			membership: 1
 			per_page: 100
+			archived: false
 		projects = data.map (project) ->
 			id: project.id
 			name: project.name_with_namespace 
