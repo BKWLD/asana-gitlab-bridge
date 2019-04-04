@@ -1,7 +1,7 @@
 // Boot Coffeescript
 require('coffeescript/register')
 
-// Raven wrapping helper helper
+// Raven wrapping helper
 var Raven = require('raven'),
 	RavenLambdaWrapper = require('serverless-sentry-lib'),
 	wrap = function(cb) { return RavenLambdaWrapper.handler(Raven, cb) }
