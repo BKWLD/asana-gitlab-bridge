@@ -48,7 +48,7 @@ module.exports = (request) ->
 			console.debug 'Updating estimate message', channelId, messageId
 			await slack.replaceEstimateRequestWithSuccess channelId, messageId, task
 
-		# If we hvae an estimate but the status is still ON estimate, update it
+		# If we have an estimate but the status is still ON estimate, update it
 		if asana.needsScheduleStatus task
 			console.debug 'Updating task status', asana.SCHEDULE_STATUS
 			await asana.updateStatus task, asana.SCHEDULE_STATUS
