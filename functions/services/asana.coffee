@@ -81,6 +81,9 @@ module.exports = class Asana
 	hasStatus: (task, status) -> 
 		status == @getStatus task, status 
 	
+	# Check if the status is also a GitLab label
+	hasStatusLabel: (task) -> @getStatus(task) in @labels[@STATUS_FIELD]
+			
 	# Get the status for a task
 	getStatus: (task) -> @customFieldValue task, @STATUS_FIELD
 		
