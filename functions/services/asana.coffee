@@ -161,7 +161,8 @@ module.exports = class Asana
 		@inMilestone(task) and 
 		not @issued(task) and 
 		task.name and # Has a name
-		not @namedLikeMilestone(task.name)
+		not @namedLikeMilestone(task.name) and
+		not @hasStatus @ESTIMATE_STATUS
 	
 	# Add a issue reference to Asana
 	addIssue: (task, issueUrl) ->
