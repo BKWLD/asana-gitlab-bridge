@@ -83,7 +83,7 @@ module.exports = class Asana
 	
 	# Check if the status is also a GitLab label or is pendinh
 	hasStatusLabelOrIsPending: (task) ->
-		@hasStatusLabel(task) or @getStatus(task) == asana.PENDING_STATUS
+		@hasStatusLabel(task) or @getStatus(task) == @PENDING_STATUS
 	
 	# Check if the status is also a GitLab label
 	hasStatusLabel: (task) -> @getStatus(task) in @labels[@STATUS_FIELD]
