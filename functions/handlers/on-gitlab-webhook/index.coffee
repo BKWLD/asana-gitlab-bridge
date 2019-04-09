@@ -48,8 +48,8 @@ module.exports = (request) ->
 			# set to like "Scheduling", leave it alone.  But if it is set to 
 			# "Addressed", then set it to "Pending", which is the effectively the
 			# Asana version of a null GitLab status.
-			if fieldName == asana.STATUS_FIELD and !value and asana.hasStatusLabel task
-				value = asana.PENDING_STATUS
+			value = asana.PENDING_STATUS if fieldName == asana.STATUS_FIELD and 
+			!value and asana.hasStatusLabelOrIsPending(task)
 			
 			# Set the value
 			await asana.updateEnumCustomField task, fieldName, value
