@@ -4,6 +4,7 @@ contentful = new (require '../../services/contentful')
 gitlab = new (require '../../services/gitlab')
 slack = new (require '../../services/slack')
 db = new (require '../../services/db')
+_ = require 'lodash'
 
 # Handle Asana webhooks
 module.exports = (request) ->
@@ -17,8 +18,18 @@ module.exports = (request) ->
 	# https://stackoverflow.com/a/14438954/59160
 	body = JSON.parse request.body
 	taskIds = (body?.events || [])
-		.filter (event) -> event.type == 'task'
-		.map (event) -> event.resource
+	
+		# Suppot the old (event.type) and new (event.resource.resource_type) schemas
+		.filter (event) -> (event.type || event.resource.resource_type) == 'task'
+		
+		# Support the old (event.resource) and new (event.resource.gid)
+		.map (event) -> 
+			if _.isObject event.resource
+			then event.resource.gid 
+			else event.resource
+		
+		# Dedupe
+		# https://stackoverflow.com/a/14438954/59160
 		.filter (taskId, index, self) -> self.indexOf(taskId) == index
 		
 	# Loop through task events
