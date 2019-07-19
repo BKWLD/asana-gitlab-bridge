@@ -20,7 +20,7 @@ module.exports = (request) ->
 	taskIds = (body?.events || [])
 	
 		# Suppot the old (event.type) and new (event.resource.resource_type) schemas
-		.filter (event) -> (event.type || event.resource.resource_type) == 'task'
+		.filter (event) -> (event.type || event.resource?.resource_type) == 'task'
 		
 		# Support the old (event.resource) and new (event.resource.gid)
 		.map (event) -> 
